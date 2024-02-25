@@ -82,13 +82,18 @@
 			opacity: 0.5;
 		}
 		main{
-			display: grid;
-			margin: 0 2svw 3svh;
+			display: flex;
+    		justify-content: center;
 			background-color: rgb(48, 61, 61);
+			border-radius: 0 0 20px 20px;
+			margin: 0 2svw 3svh;
 			min-height: 400px;
 			min-width: 570px;
-			max-height: 89svh;/*100-3-5-2-(1?)*/
-			border-radius: 0 0 20px 20px;
+			max-height: 89svh;		/*	100-3-5-2-(1?)	*/
+			overflow: hidden;
+		}
+		#scroller{
+			width: 30svw;
 			overflow: auto;
 		}
 		.row{
@@ -99,9 +104,9 @@
 			min-height: 30px;
 			height: 5svh;
 		}
-		.row:first-child{
+		/*.row:first-child{						to finalize
 			max-height: 5svh;
-		}
+		}*/
 		.row:last-child{
 			border-radius: inherit;
 		}
@@ -113,7 +118,7 @@
 			font-size: 14px;
 			min-height: 100%;
 			min-width: 50px;
-			width: 15%;									/* dynamic */
+			width: 33.333333%;									/* dynamic */
 			background-color: rgb(8, 124, 124);
 		}
 		.cell:first-child{
@@ -141,20 +146,22 @@
 		<button id="remove" class="button">УДАЛИТЬ</button>
 	</header>
 	<main>
-		<div class="row">
-			<div class="cell">ид</div>
-			<div class="cell">значение</div>
-			<div class="cell">ед_изм</div>
-		</div>
-		<div class="row">
-			<div class="cell">1</div>
-			<div class="cell">10</div>
-			<div class="cell">л</div>
-		</div>
-		<div class="row">
-			<div class="cell">2</div>
-			<div class="cell">15</div>
-			<div class="cell">кг</div>
+		<div id="scroller">
+			<div class="row">
+				<div class="cell">ид</div>
+				<div class="cell">значение</div>
+				<div class="cell">ед_изм</div>
+			</div>
+			<div class="row">
+				<div class="cell">1</div>
+				<div class="cell">10</div>
+				<div class="cell">л</div>
+			</div>
+			<div class="row">
+				<div class="cell">2</div>
+				<div class="cell">15</div>
+				<div class="cell">кг</div>
+			</div>
 		</div>
 	</main>
 	
@@ -166,11 +173,11 @@
 <?php
 
 $table_name = $_POST['table_name'];
-echo $table_name;
+#echo "'" . $table_name . "'";
 echo '<script>
-	var main = document.getElementsByTagName(`main`)[0];
-	main.innerHTML = `'. Output::get_table_cols("отладочная") .'`;
-	main.innerHTML += `'. Output::get_table_data("отладочная") .'`;
+	var scroller = document.getElementById(`scroller`);
+	scroller.innerHTML = `'. Output::get_table_cols("отладочная") .'`;
+	scroller.innerHTML += `'. Output::get_table_data("отладочная") .'`;
 </script>';
 
 ?>
