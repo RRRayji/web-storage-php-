@@ -30,7 +30,7 @@ body, html {
 }
 @font-face{
 	font-family: 'JetBrains Mono';
-	src: url('/style/fonts/JetBrainsMono-SemiBold.ttf') format('truetype');
+	src: url('../fonts/JetBrainsMono-SemiBold.ttf') format('truetype');
 }
 header{
 	margin: 3svh 2svw 0;
@@ -71,7 +71,19 @@ header{
 	transition: .5s all;
 	opacity: 0.5;
 }
+#select_form{
+	width: 15%;
+	min-width: 120px;
+	height: 100%;
+}
 #table_name{
+	text-align: center;
+	width: 100%;
+	height: inherit;
+	font: 16px Luminari, fantasy;
+	letter-spacing: 1.3px;
+	text-decoration: none;
+	border: none;
 	color: #e0e1dd;
 	background-color: #415a77;
 }
@@ -87,7 +99,7 @@ main{
 	background-color: #1b2d37;
 }
 #scroller{
-	width: 30svw;
+	/*		width: 30svw;		*/
 	min-width: 300px;
 	overflow: auto;
 }
@@ -98,6 +110,7 @@ main{
 	justify-content: center;
 	min-height: 30px;
 	height: 5svh;
+	border-top: 1px solid #1b2d37;
 }
 /*.row:first-child{						to finalize
 	max-height: 5svh;
@@ -114,6 +127,10 @@ main{
 	min-height: 100%;
 	min-width: 50px;
 	width: 33.333333%;									/* dynamic */
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	border-left: 1px solid #1b2d37;
 	color: #e0e1dd;
 	background-color: #415a77;
 }
@@ -127,4 +144,7 @@ main{
 .cell:last-child{
 	border-radius: inherit;
 	border-bottom-left-radius: 0;
+}
+.text{
+	justify-content: left;
 }

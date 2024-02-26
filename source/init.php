@@ -134,7 +134,8 @@ class Input extends SQLData
 		if (isset(parent::$conn) && parent::$conn instanceof PDO)
 		{
 			$stm = parent::$conn->prepare($query);
-			return $stm->execute();
+			$stm->execute();
+			return;
 		}
 		print_r("conn value: " . parent::$conn);
 		die("Connection lost at exec_tr().");
