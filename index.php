@@ -42,7 +42,6 @@
 		}
 		header{
 			margin: 3svh 2svw 0;
-			background-color: #4585a9;
 			min-height: 45px;
 			min-width: 570px;
 			height: 5svh;
@@ -50,21 +49,22 @@
 			display: flex;
 			justify-content: center;
 			align-items: center;
+			background-color: #778da9;
 		}
 		.button{
 			width: 15%;
 			min-width: 120px;
 			height: 100%;
-			background-color: #92cced;
 			display: flex;
 			justify-content: center;
 			align-items: center;
 			font: 16px Luminari, fantasy;
-			color: rgb(41, 78, 97);/* rgb(82, 136, 138); */
 			letter-spacing: 1.3px;
 			text-decoration: none;
 			border: none;
 			cursor: pointer;
+			color: #e0e1dd;
+			background-color: #415a77;
 		}
 		.button:first-child{
 			border-radius: 20px 0 0 20px;
@@ -79,16 +79,20 @@
 			transition: .5s all;
 			opacity: 0.5;
 		}
+		#table_name{
+			color: #e0e1dd;
+			background-color: #415a77;
+		}
 		main{
 			display: flex;
     		justify-content: center;
-			background-color: rgb(45, 55, 61);
 			border-radius: 0 0 20px 20px;
 			margin: 0 2svw 3svh;
 			min-height: 400px;
 			min-width: 570px;
 			max-height: 89svh;		/*	100-3-5-2-(1?)	*/
 			overflow: hidden;
+			background-color: #1b2d37;
 		}
 		#scroller{
 			width: 30svw;
@@ -118,7 +122,11 @@
 			min-height: 100%;
 			min-width: 50px;
 			width: 33.333333%;									/* dynamic */
-			background-color: #5994c5;
+			color: #e0e1dd;
+			background-color: #415a77;
+		}
+		.row:nth-child(odd) .cell{
+			background-color: #778da9;
 		}
 		.cell:first-child{
 			border-radius: inherit;
@@ -127,9 +135,6 @@
 		.cell:last-child{
 			border-radius: inherit;
 			border-bottom-left-radius: 0;
-		}
-		.row:nth-child(odd) .cell{
-			background-color: #6db5dd;
 		}
 	</style>
 </head>
@@ -140,7 +145,7 @@
 		<button id="add" class="button">ДОБАВИТЬ</button>
 		<form class="button" method="post" action="">
 			<select name="table_name" id="table_name" onchange="this.form.submit()">
-				<option value="" name="first_element" id="first_element"></option>
+				<option value="" name="first_element" id="first_element" disabled></option>
 				<option value="отладочная">отладочная</option>
 				<option value="ед_изм">ед_изм</option>
 				<option value="категория">категория</option>
