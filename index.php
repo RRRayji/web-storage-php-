@@ -77,7 +77,7 @@
 			-moz-transition: .5s all;
 			-ms-transition: .5s all;
 			transition: .5s all;
-			opacity: 0.5;
+			opacity: 0.7;
 		}
 		#select_form{
 			width: 15%;
@@ -93,11 +93,15 @@
 			text-decoration: none;
 			outline: none;
 			border: none;
+			cursor: pointer;
 			color: #e0e1dd;
 			background-color: #415a77;
 		}
 		#table_name:hover{
 			border: 1px solid #778da9;
+		}
+		select#table_name option{
+			cursor: pointer;
 		}
 		main{
 			display: flex;
@@ -111,22 +115,23 @@
 			background-color: #1b2d37;
 		}
 		#scroller{
-			/*		width: 30svw;		*/
+			border: 1px solid #1b2d37;
 			min-width: 300px;
 			overflow: auto;
 		}
 		.row{
 			display: flex;
 			flex-wrap: nowrap;
-			align-items: center;
+			overflow: hidden;
+			align-items: flex-start;
 			justify-content: center;
 			min-height: 30px;
 			height: 5svh;
 			border-top: 1px solid #1b2d37;
 		}
-		/*.row:first-child{						to finalize
-			max-height: 5svh;
-		}*/
+		.row:first-child{
+			border-top: none;
+		}
 		.row:last-child{
 			border-radius: inherit;
 		}
@@ -140,10 +145,8 @@
 			min-width: 50px;
 			width: 33.333333%;									/* dynamic */
 			overflow: hidden;
-			white-space: normal;
-			text-overflow: ellipsis;
 			padding: 0 5px;
-			border-left: 1px solid #1b2d37;
+			border-right: 1px solid #1b2d37;
 			color: #e0e1dd;
 			background-color: #415a77;
 		}
@@ -161,20 +164,60 @@
 		.text{
 			justify-content: left;
 		}
+		/* 			ADD FORM		 */
+		#add_form{
+			display: none;
+			position: absolute;
+			left: 25.5svw;
+			min-height: 17svh;
+			min-width: 230px;
+			padding: 3svh 2svw;
+			border-radius: 15px;
+			border: 1px solid #415a77;
+			background-color: #1b2d37;
+		}
+		.add_input{
+			margin: 1.5svh 0 0;
+			min-width: 13svw;
+			min-height: 3.5svh;
+			max-height: 5svh;
+			border-radius: 10px;
+			padding: 0 10px;
+			font-family: 'JetBrains Mono', monospace;
+			font-size: 14px;
+			letter-spacing: 1px;
+			background-color: #edf2f4;
+			border: 2px solid #415a77;
+		}
+		.add_input:first-child{
+			margin: 0;
+		}
+		.add_input:last-child{
+			min-width: 10svw;
+			margin: 1.5svh 3svw 0;
+			cursor: pointer;
+			color: #e0e1dd;
+			background-color: #415a77;
+		}
+		.add_input:last-child:hover{
+			-webkit-transition: .5s all;
+			-moz-transition: .5s all;
+			-ms-transition: .5s all;
+			transition: .5s all;
+			opacity: 0.8;
+		}
 	</style>
 </head>
 <body>
-	<nav></nav>
-
 	<header>
-		<button id="add" class="button">ДОБАВИТЬ</button>
-		<form id="select_form" method="post" action="">
+		<button type="button" id="add" class="button" onclick="display_add_form()">ДОБАВИТЬ</button>
+		<form method="POST" action="" id="select_form">
 			<select name="table_name" id="table_name" onchange="this.form.submit()">
 				<option value="" name="first_element" id="first_element"></option>
 				<!-- OPTIONS -->
 			</select>
 		</form>
-		<button id="remove" class="button">УДАЛИТЬ</button>
+		<button type="button" id="remove" class="button">УДАЛИТЬ</button>
 	</header>
 	<main>
 		<div id="scroller">
@@ -182,7 +225,12 @@
 		</div>
 	</main>
 
-	<script src="style/js/script.js"></script>
+	<form method="POST" action="" id="add_form" name="add_form" onsubmit="">
+		<input type="hidden" id="a_table_name" name="a_table_name" value="ПОСТАВЩИК">
+		<!-- INPUTS -->
+    </form>
+
+	<script src="/style/js/myscript.js"></script>
 	<?php	include 'source/init.php';
 			include 'source/load.php';	?>
 </body>
