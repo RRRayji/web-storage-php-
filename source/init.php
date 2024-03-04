@@ -100,7 +100,7 @@ class Output extends SQLData
 		echo get_table_data($table_name);
 	}
 }
-
+//			" ebal ya ety paboty " © I_KAUFMANN 16:18 04.03.2024
 class Input extends SQLData
 {
 	public static function load_data()	//	backup-файл
