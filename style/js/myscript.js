@@ -61,11 +61,36 @@ function display_add_form()
 		
 		var inps = document.querySelectorAll('.add_input');
 		inps.forEach(function(el) {
-			if (el.id.toString() == "ид")
-			{
-				el.focus();
-				return;
-			}
+			el.focus();
+			return;
 		});
 	}
 }
+
+
+// Обрабатываем событие отправки формы
+/*
+add_form.addEventListener('submit', function(event) {
+	// Предотвращаем стандартное действие отправки формы
+	event.preventDefault();
+
+	// Ваш код обработки отправки формы здесь
+	// Например, отправка данных с использованием AJAX
+	// или другие действия, которые вы хотите выполнить
+
+
+	// Пример отправки данных с использованием Fetch API
+	fetch(add_form.action, {
+		method: add_form.method,
+		body: new FormData(add_form)
+	})
+	.then(response => {
+		// Обработка ответа от сервера
+		// console.log('Form submitted successfully');
+	})
+	.catch(error => {
+		// Обработка ошибки при отправке формы
+		console.error('Error submitting form:', error);
+	});
+});
+*/

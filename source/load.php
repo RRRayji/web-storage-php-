@@ -1,5 +1,6 @@
 <?php
 $ID_NAME = "ид";
+$table_name = "ПОСТАВЩИК";
 
 function to_upper($string)
 {
@@ -11,9 +12,13 @@ function dis($string)
     echo '<script>alert(`'. $string .'`)</script>';
 }
 
-function update_table()
+function update_table($load_current = null)
 {
+	global $table_name;
     // Получение списка таблиц
+	echo '<script>
+            document.querySelector(`#table_name`).innerHTML = `<option value="" name="first_element" id="first_element"></option>`;
+        </script>';
     $tables = Input::exec_tr("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA='CatalogDB';");
     foreach ($tables as $name) {
         echo '<script>
@@ -22,7 +27,14 @@ function update_table()
     }
 
     // Обновление текущих данных таблицы
-    $table_name = ($_POST["table_name"] == null) ? "ПОСТАВЩИК" : $_POST["table_name"];
+	if (!empty($load_current))
+	{
+		$table_name = $load_current;
+	}
+	else if (($_POST["table_name"] != null))
+	{
+		$table_name = $_POST["table_name"];
+	}
     echo '<script>
         document.querySelector(`#first_element`).innerHTML = `'. to_upper($table_name) .'`;
     </script>';
@@ -40,7 +52,7 @@ function update_table()
     return $table_name;
 }
 
-$table_name = update_table();
+update_table();
 
 // Проверка, является ли поле 'ид' с автоинкрементом
 $is_auto_increment = false;
@@ -88,7 +100,7 @@ if (isset($_POST["добавить"]))
         }
         $columns .= $cell . ", ";
     }
-    $columns = rtrim($columns, ", ")
+    $columns = rtrim($columns, ", ");
 
     // Формирование списка значений
     $values = "";
@@ -103,7 +115,7 @@ if (isset($_POST["добавить"]))
     $values = rtrim($values, ", ");
 
     $query .= $columns . ") VALUES(" . $values . ");";
-    dis($query);
-    Input::exec_tr($query);
-    // $table_name = update_table(); // в нейронке продолжение
+
+    Input::execonly_tr($query);
+    update_table($table_name);
 }

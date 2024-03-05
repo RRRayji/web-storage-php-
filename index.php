@@ -213,7 +213,6 @@
 		<button type="button" id="add" class="button" onclick="display_add_form()">ДОБАВИТЬ</button>
 		<form method="POST" action="" id="select_form">
 			<select name="table_name" id="table_name" onchange="this.form.submit()">
-				<option value="" name="first_element" id="first_element"></option>
 				<!-- OPTIONS -->
 			</select>
 		</form>
@@ -225,7 +224,7 @@
 		</div>
 	</main>
 
-	<form method="POST" action="" id="add_form" name="add_form" onsubmit="">
+	<form method="POST" action="" id="add_form" name="add_form">
 		<input type="hidden" id="a_table_name" name="a_table_name" value="ПОСТАВЩИК">
 		<!-- INPUTS -->
     </form>
