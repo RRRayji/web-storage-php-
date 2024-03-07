@@ -49,7 +49,6 @@ function update_table($load_current = null)
     echo '<script>
         document.querySelector("#a_table_name").value = `'. $table_name .'`;
     </script>';
-    return $table_name;
 }
 
 update_table();

@@ -206,6 +206,35 @@
 			transition: .5s all;
 			opacity: 0.8;
 		}
+		/*			REM FORM		 */
+		#rem_form{
+			display: none;
+			flex-wrap: nowrap;
+			position: absolute;
+			top: 8svh;
+			left: 58svw;
+			min-height: 2svh;
+			min-width: 170px;
+			padding: 2svh 1svw;
+			border-radius: 15px;
+			align-items: center;
+			border: 1px solid #415a77;
+			background-color: #1b2d37;
+		}
+		#rem_form div, #rem_confirm{
+			font-family: 'JetBrains Mono', monospace;
+			font-size: 14px;
+			letter-spacing: 1px;
+			color: #e0e1dd;
+		}
+		#rem_confirm{
+			margin-left: 15px;
+			padding: 7px 40px;
+			border-radius: 10px;
+			cursor: pointer;
+			border: none;
+			background-color: #415a77;
+		}
 	</style>
 </head>
 <body>
@@ -216,7 +245,7 @@
 				<!-- OPTIONS -->
 			</select>
 		</form>
-		<button type="button" id="remove" class="button">УДАЛИТЬ</button>
+		<button type="button" id="remove" class="button" onclick="display_rem_form()">УДАЛИТЬ</button>
 	</header>
 	<main>
 		<div id="scroller">
@@ -229,7 +258,12 @@
 		<!-- INPUTS -->
     </form>
 
-	<script src="/style/js/myscript.js"></script>
+	<form method="POST" action="test.php" id="rem_form" name="rem_form">
+			<div id="confirm_text">ВЫ УВЕРЕНЫ?</div>
+			<input type="submit" id="rem_confirm" name="rem_confirm" value="ДА">
+		</form>
+
+	<script src="style/js/myscript0.js"></script>
 	<?php	include 'source/init.php';
 			include 'source/load.php';	?>
 </body>
