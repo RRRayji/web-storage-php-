@@ -1,6 +1,14 @@
 <?php
 $ID_NAME = "ид";
 $table_name = "ПОСТАВЩИК";
+$NODATAERR = "Еблан блядь, значение выбери.";
+
+function is_varchar($table_name, $selected_col)
+{
+	$query = "SELECT DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA='CatalogDB' AND TABLE_NAME='" . $table_name . "' AND COLUMN_NAME='" . $selected_col . "';";
+	$res = Input::exec_tr($query);
+	return strtolower($res[0]["DATA_TYPE"]) == "varchar";
+}
 
 function to_upper($string)
 {
@@ -45,10 +53,18 @@ function update_table($load_current = null)
         scroller.innerHTML += `'. Output::get_table_data($table_name) .'`;
     </script>';
 
-    // Установка имени таблицы в скрытом поле формы
+    // упд скрытых полей форм
     echo '<script>
-        document.querySelector("#a_table_name").value = `'. $table_name .'`;
-    </script>';
+		document.querySelector("#add_form").innerHTML = `<input type="hidden" id="a_table_name" name="a_table_name" value="'. $table_name .'">`;
+	</script>';
+	echo '<script>
+		document.querySelector("#rem_form").innerHTML = `<div id="confirm_text">ВЫ УВЕРЕНЫ?</div>
+			<input type="hidden" id="a_table_name" name="a_table_name" value="'. $table_name .'">
+			<input type="hidden" id="selected_class" name="selected_class" value="">
+			<input type="hidden" id="selected_value" name="selected_value" value="">
+			<input type="submit" id="rem_confirm" name="rem_confirm" value="ДА">
+		`;
+	</script>';
 }
 
 update_table();
@@ -65,10 +81,7 @@ foreach ($id_extras as $ex)
     }
 }
 
-// Заполнение формы
-echo '<script>
-    document.querySelector("#add_form").innerHTML = `<input type="hidden" id="a_table_name" name="a_table_name" value="'. $table_name .'">`;
-</script>';
+
 foreach (Output::get_cols($table_name) as $cell) {
     if ($is_auto_increment && $cell == $ID_NAME) {
         continue;
@@ -83,38 +96,74 @@ echo '<script>
     document.querySelector("#add_form").innerHTML += `<input type="submit" class="add_input" id="добавить" name="добавить" value="ДОБАВИТЬ">`;
 </script>';
 
-// Обработка отправки формы
+function is_inputs_empty()
+{
+	foreach (Output::get_cols($table_name) as $cell)
+    {
+		$s = trim($_POST[$cell]);
+		print_r($s);
+		echo "<br>";
+        if (empty($s)) return true;
+    }
+	return false;
+}
+
 if (isset($_POST["добавить"]))
 {
     $table_name = $_POST["a_table_name"];
-    $query = "INSERT INTO " . $table_name . "(";
+	if (is_inputs_empty() == true)
+	{
+		dis($NODATAERR);
+	}
+	else
+	{
+		$query = "INSERT INTO " . $table_name . "(";
+	
+		// Формирование списка столбцов
+		$columns = "";
+		foreach (Output::get_cols($table_name) as $cell)
+		{
+			if ($is_auto_increment && $cell == $ID_NAME)
+			{
+				continue;
+			}
+			$columns .= $cell . ", ";
+		}
+		$columns = rtrim($columns, ", ");
+	
+		// Формирование списка значений
+		$values = "";
+		foreach (Output::get_cols($table_name) as $cell)
+		{
+			if ($is_auto_increment && $cell == $ID_NAME)
+			{
+				continue;
+			}
+			$values .= "'" . $_POST[$cell] . "', "; // Оборачиваем значения в кавычки, если это строки
+		}
+		$values = rtrim($values, ", ");
+	
+		$query .= $columns . ") VALUES(" . $values . ");";
+	
+		Input::execonly_tr($query);
+		update_table($table_name);
+	}
+}
 
-    // Формирование списка столбцов
-    $columns = "";
-    foreach (Output::get_cols($table_name) as $cell)
-    {
-        if ($is_auto_increment && $cell == $ID_NAME)
-        {
-            continue;
-        }
-        $columns .= $cell . ", ";
-    }
-    $columns = rtrim($columns, ", ");
-
-    // Формирование списка значений
-    $values = "";
-    foreach (Output::get_cols($table_name) as $cell)
-    {
-        if ($is_auto_increment && $cell == $ID_NAME)
-        {
-            continue;
-        }
-        $values .= "'" . $_POST[$cell] . "', "; // Оборачиваем значения в кавычки, если это строки
-    }
-    $values = rtrim($values, ", ");
-
-    $query .= $columns . ") VALUES(" . $values . ");";
-
-    Input::execonly_tr($query);
-    update_table($table_name);
+if (isset($_POST["rem_confirm"]))
+{
+	$table_name = $_POST["a_table_name"];
+	$selected_col = $_POST["selected_class"];
+	$selected_value = $_POST["selected_value"];
+	if (empty($table_name) || empty($selected_col) || empty($selected_value))
+	{
+		dis($NODATAERR);
+	}
+	else
+	{
+		if (is_varchar($table_name, $selected_col)) $selected_value = "'" . $selected_value . "'";
+		$query = "DELETE FROM " . $table_name . " WHERE " . $selected_col . " = " . $selected_value . ";";
+		Input::execonly_tr($query);
+		update_table($table_name);
+	}
 }

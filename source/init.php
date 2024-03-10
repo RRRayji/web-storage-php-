@@ -85,9 +85,9 @@ class Output extends SQLData
 		foreach (Input::exec_tr("SELECT * FROM $table_name") as $col => $row)
 		{
 			$table_schema .= '<div class="row">';
-			foreach ($row as $cell)
+			foreach ($row as $col => $cell)
 			{
-				$table_schema .= '<div class="cell">' . $cell . '</div>';
+				$table_schema .= '<div class="cell '. $col .'">' . $cell . '</div>';
 			}
 			$table_schema .= '</div>';
 		}

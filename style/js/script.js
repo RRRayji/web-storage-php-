@@ -5,6 +5,28 @@ var scroller = document.querySelector(`#scroller`);
 var add_form = document.querySelector(`#add_form`);
 var rem_form = document.querySelector(`#rem_form`);
 var main = document.querySelector(`main`);
+var selected_class = document.querySelector("#selected_class");
+var selected_value = document.querySelector("#selected_value");
+var last_selected = null;
+
+
+scroller.onmouseenter = function ()
+{
+	let rows = document.querySelectorAll(".row:not(:first-child)");
+	rows.forEach(row => {
+		let cells = row.querySelectorAll(".cell");
+		cells.forEach(cell => {
+			cell.onclick = function (){
+				selected_class.value = cell.className.replace("cell", "").trim();
+				selected_value.value = cell.innerHTML;
+				if (last_selected != null) last_selected.style.backgroundColor = "";
+				last_selected = cell;
+				cell.style.backgroundColor = `#99b0ce`;
+			};
+		});
+	});
+	scroller.onmouseenter = null;
+};
 
 function wait(ms)
 {
@@ -19,7 +41,7 @@ function get_rect(element)
 function clear_info()
 {
 	var arr = document.querySelectorAll('.add_input:not(:last-child)');
-	arr.forEach(function(el) {
+	arr.forEach(function (el) {
 		el.value = '';
 	});
 }
