@@ -10,7 +10,7 @@ var selected_value = document.querySelector("#selected_value");
 var last_selected = null;
 
 
-scroller.onmouseenter = function ()
+document.querySelector("body").onmouseenter = function ()
 {
 	let rows = document.querySelectorAll(".row:not(:first-child)");
 	rows.forEach(row => {
@@ -25,6 +25,7 @@ scroller.onmouseenter = function ()
 			};
 		});
 	});
+	let len = document.querySelector(".row:first-child").querySelectorAll(".cell").length;
 	scroller.onmouseenter = null;
 };
 

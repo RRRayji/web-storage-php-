@@ -72,7 +72,7 @@ class Output extends SQLData
 		$cols_schema .= '<div class="row">';
 		foreach (Output::get_cols($table_name) as $cell)
 		{
-			$cols_schema .= '<div class="cell">' . $cell . '</div>';
+			$cols_schema .= '<div class="cell ' . $cell . '">' . $cell . '</div>';
 		}
 		$cols_schema .= '</div>';
 		return $cols_schema;

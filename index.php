@@ -4,7 +4,7 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Storage</title>
-	<link rel="stylesheet" type="text/css" href="/style/css/style.css?modified=20012010">
+	<link rel="stylesheet" type="text/css" href="/style/css/style.css?modified=4">
 </head>
 <body>
 	<header>
@@ -32,6 +32,6 @@
 
 	<?php	include 'source/init.php';
 		include 'source/load.php';	?>
-	<script src="style/js/script.js?modified=20012009"></script>
+	<script src="style/js/script.js?modified=1"></script>
 </body>
 </html>
