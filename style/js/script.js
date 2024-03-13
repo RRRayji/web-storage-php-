@@ -10,6 +10,11 @@ var selected_value = document.querySelector("#selected_value");
 var last_selected = null;
 
 
+/*
+	var sel = document.querySelector("#select_ид-товар");
+	console.log(sel.options[sel.selectedIndex].innerHTML);	//	moloko
+*/
+
 document.querySelector("body").onmouseenter = function ()
 {
 	let rows = document.querySelectorAll(".row:not(:first-child)");

@@ -2,6 +2,7 @@
 $DB_NAME = "test";
 $table_name = "заявка";
 $ID_NAME = "ид";
+$TITLE = "наименование";
 $NODATAERR = "Ошибка значения.";
 $is_auto_increment = false;
 
@@ -37,6 +38,7 @@ function update_table($load_current = null)
 	global $table_name;
 	global $DB_NAME;
 	global $ID_NAME;
+	global $TITLE;
 	global $is_auto_increment;
 
     // Получение списка таблиц
@@ -89,11 +91,19 @@ function update_table($load_current = null)
 				document.querySelector("#add_form").innerHTML += `<select class="add_input" id="select_'.$cell.'"></select>`;
 				document.querySelector("#select_'.$cell.'").innerHTML = `<option class="add_options" value="select_'.$cell.'" disabled>'.$cell.'</option>`;
 			</script>';
-			$fk_table = Input::exec_tr("SELECT ид,наименование FROM ". preg_replace('/^ид-/', '', $cell) .";");
+			$fk_table = Input::exec_tr("SELECT ".$ID_NAME.",".$TITLE." FROM ". preg_replace('/^ид-/', '', $cell) .";");
+			$local_table = array_column($fk_table, $TITLE, $ID_NAME);
+			print_r($local_table);
+			foreach ($fk_table as $v => $c)
+			{
+				print_r($fk_table[$v]['ид'] . " : " . $c[$TITLE]);
+				echo "<br>";
+			}
+			print_r($local_table);
 			foreach ($fk_table as $row)
 			{
 				echo '<script>
-					document.querySelector("#select_'.$cell.'").innerHTML += `<option class="add_options" value="select_'.$row['наименование'].'">'.$row['наименование'].'</option>`;
+					document.querySelector("#select_'.$cell.'").innerHTML += `<option class="add_options" value="select_'.$row[$TITLE].'">'.$row[$TITLE].'</option>`;
 				</script>';
 			}
 		}
