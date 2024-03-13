@@ -31,7 +31,7 @@
 	</form>
 
 	<?php	include 'source/init.php';
-		include 'source/load.php';	?>
+			include 'source/load.php';	?>
 	<script src="style/js/script.js?modified=1"></script>
 </body>
 </html>

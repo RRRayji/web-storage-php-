@@ -3,7 +3,7 @@
 class SQLData {
     protected static $conn = null;
     protected static $servername = "localhost";
-    protected static $dbname = "CatalogDB";
+    protected static $dbname = "test";
     protected static $user = "root";
     protected static $password = "";
 

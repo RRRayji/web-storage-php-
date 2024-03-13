@@ -201,6 +201,9 @@ main{
 	transition: .5s all;
 	opacity: 0.8;
 }
+.add_selects{
+	
+}
 /*			REM FORM		 */
 #rem_form{
 	display: none;
