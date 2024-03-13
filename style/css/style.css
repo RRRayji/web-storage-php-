@@ -201,8 +201,9 @@ main{
 	transition: .5s all;
 	opacity: 0.8;
 }
-.add_selects{
-	
+.add_options{
+	color: #edf2f4;
+	background-color: #415a77;
 }
 /*			REM FORM		 */
 #rem_form{

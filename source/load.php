@@ -87,14 +87,18 @@ function update_table($load_current = null)
 			echo '<script>
 				document.querySelector("#add_form").innerHTML += `<input type="hidden" class="add_input" id="'. $cell .'" name="'. $cell .'" placeholder="'. $cell .'">`;
 				document.querySelector("#add_form").innerHTML += `<select class="add_input" id="select_'.$cell.'"></select>`;
-				document.querySelector("#select_'.$cell.'").innerHTML += `<option class="add_input" value="select_'.$cell.'">'.$cell.'</option>`;
+				document.querySelector("#select_'.$cell.'").innerHTML = `<option class="add_options" value="select_'.$cell.'" disabled>'.$cell.'</option>`;
 			</script>';
-			/*$fk = Input::exec_tr("SELECT ид,наименование");
-			foreach*/
+			$fk_table = Input::exec_tr("SELECT ид,наименование FROM ". preg_replace('/^ид-/', '', $cell) .";");
+			foreach ($fk_table as $row)
+			{
+				echo '<script>
+					document.querySelector("#select_'.$cell.'").innerHTML += `<option class="add_options" value="select_'.$row['наименование'].'">'.$row['наименование'].'</option>`;
+				</script>';
+			}
 		}
 		else
 		{
-			print_r(in_array($cell, $index_cols));
 			echo '<script>
 				document.querySelector("#add_form").innerHTML += `<input type="text" class="add_input" id="'. $cell .'" name="'. $cell .'" placeholder="'. $cell .'" required>`;
 			</script>';
