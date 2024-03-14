@@ -3,9 +3,11 @@
 class SQLData {
     protected static $conn = null;
     protected static $servername = "localhost";
-    protected static $dbname = "test";
+    protected static $dbname = "копеечка";
     protected static $user = "root";
     protected static $password = "";
+
+	public static function get_dbname() { return $dbname; }
 
 	public static function Init()
 	{
@@ -105,7 +107,7 @@ class Input extends SQLData
 {
 	public static function load_data()	//	backup-файл
 	{
-		$file = fopen("source/catalogdb.sql", "r") or die("Unable to load file!");
+		$file = fopen("source/копеечка.sql", "r") or die("Unable to load file!");
 	
 		$data = "";
 		while (!feof($file))

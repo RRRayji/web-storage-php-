@@ -41,7 +41,7 @@ header{
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	background-color: #778da9;
+	background-color: #516885;
 }
 .button{
 	width: 15%;
@@ -56,7 +56,7 @@ header{
 	border: none;
 	cursor: pointer;
 	color: #e0e1dd;
-	background-color: #415a77;
+	background-color: #38516d;
 }
 .button:first-child{
 	border-radius: 20px 0 0 20px;
@@ -87,10 +87,10 @@ header{
 	border: none;
 	cursor: pointer;
 	color: #e0e1dd;
-	background-color: #415a77;
+	background-color: #38516d;
 }
 #table_name:hover{
-	border: 1px solid #778da9;
+	border: 1px solid #516885;
 }
 select#table_name option{
 	cursor: pointer;
@@ -140,13 +140,13 @@ main{
 	padding: 0 5px;
 	border-right: 1px solid #111e26;
 	color: #e0e1dd;
-	background-color: #415a77;
+	background-color: #38516d;
 }
 .cell.ид {
 	width: 60px;
 }
 .row:nth-child(odd) .cell{
-	background-color: #778da9;
+	background-color: #516885;
 }
 .cell:first-child{
 	border-radius: inherit;
@@ -172,7 +172,7 @@ main{
 	min-width: 230px;
 	padding: 3svh 2svw;
 	border-radius: 15px;
-	border: 1px solid #415a77;
+	border: 1px solid #38516d;
 	background-color: #111e26;
 }
 .add_input{
@@ -186,7 +186,7 @@ main{
 	font-size: 14px;
 	letter-spacing: 1px;
 	background-color: #edf2f4;
-	border: 2px solid #415a77;
+	border: 2px solid #38516d;
 }
 .add_input:first-child{
 	margin: 0;
@@ -196,7 +196,7 @@ main{
 	margin: 1.5svh 3svw 0;
 	cursor: pointer;
 	color: #e0e1dd;
-	background-color: #415a77;
+	background-color: #38516d;
 }
 .add_input:last-child:hover{
 	-webkit-transition: .5s all;
@@ -207,7 +207,7 @@ main{
 }
 .add_options{
 	color: #edf2f4;
-	background-color: #415a77;
+	background-color: #38516d;
 }
 .add_options:first-child{
 	background-color: #2e3946;
@@ -224,7 +224,7 @@ main{
 	padding: 2svh 1svw;
 	border-radius: 15px;
 	align-items: center;
-	border: 1px solid #415a77;
+	border: 1px solid #38516d;
 	background-color: #111e26;
 }
 #rem_form div, #rem_confirm{
@@ -239,5 +239,5 @@ main{
 	border-radius: 10px;
 	cursor: pointer;
 	border: none;
-	background-color: #415a77;
+	background-color: #38516d;
 }
