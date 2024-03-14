@@ -1,24 +1,13 @@
 <?php
-$DB_NAME = "test";
-$table_name = "заявка";
 $ID_NAME = "ид";
-$TITLE = "наименование";
-$NODATAERR = "Ошибка значения.";
+$table_name = "ПОСТАВЩИК";
+$NODATAERR = "Еблан блядь, значение выбери.";
 $is_auto_increment = false;
 
 
-function is_in_array($value, $key, $array)
-{
-	foreach ($array as $el)
-	{
-		if (strtolower($el[$key]) == $value) return true;
-	}
-	return false;
-}
-
 function is_varchar($table_name, $selected_col)
 {
-	$query = "SELECT DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA='". $DB_NAME ."' AND TABLE_NAME='" . $table_name . "' AND COLUMN_NAME='" . $selected_col . "';";
+	$query = "SELECT DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA='CatalogDB' AND TABLE_NAME='" . $table_name . "' AND COLUMN_NAME='" . $selected_col . "';";
 	$res = Input::exec_tr($query);
 	return strtolower($res[0]["DATA_TYPE"]) == "varchar";
 }
@@ -36,19 +25,17 @@ function dis($string)
 function update_table($load_current = null)
 {
 	global $table_name;
-	global $DB_NAME;
 	global $ID_NAME;
-	global $TITLE;
 	global $is_auto_increment;
 
     // Получение списка таблиц
 	echo '<script>
             document.querySelector(`#table_name`).innerHTML = `<option value="" name="first_element" id="first_element"></option>`;
         </script>';
-    $tables = Input::exec_tr("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA='".$DB_NAME."';");
+    $tables = Input::exec_tr("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA='CatalogDB';");
     foreach ($tables as $name) {
         echo '<script>
-            document.querySelector(`#table_name`).innerHTML += `<option value="'. $name['TABLE_NAME'] .'">'. to_upper($name['TABLE_NAME']) .'</option>`;
+            document.querySelector(`#table_name`).innerHTML += `<option>'. to_upper($name['TABLE_NAME']) .'</option>`;
         </script>';
     }
 
@@ -76,43 +63,21 @@ function update_table($load_current = null)
 		document.querySelector("#add_form").innerHTML = `<input type="hidden" id="a_table_name" name="a_table_name" value="'. $table_name .'">`;
 	</script>';
 	// Проверка, является ли поле 'ид' с автоинкрементом
-	$id_extras = Input::exec_tr("SELECT EXTRA FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '". $table_name ."' AND COLUMN_KEY= 'PRI';");
-	if (is_in_array("auto_increment", 'EXTRA', $id_extras)) $is_auto_increment = true;
-
-	$index_cols = Input::exec_tr("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '". $table_name ."' AND COLUMN_KEY = 'MUL';");
-
+	$id_extras = Input::exec_tr("SELECT EXTRA FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '". $table_name ."' AND COLUMN_NAME = '". $ID_NAME ."';");
+	foreach ($id_extras as $ex)
+	{
+		if (strtolower($ex['EXTRA']) == "auto_increment")
+		{
+			$is_auto_increment = true;
+			break;
+		}
+	}
 	foreach (Output::get_cols($table_name) as $cell)
 	{
 		if ($is_auto_increment && $cell == $ID_NAME) continue;
-		if (is_in_array($cell, 'COLUMN_NAME', $index_cols))
-		{
-			echo '<script>
-				document.querySelector("#add_form").innerHTML += `<input type="hidden" class="add_input" id="'. $cell .'" name="'. $cell .'" placeholder="'. $cell .'">`;
-				document.querySelector("#add_form").innerHTML += `<select class="add_input" id="select_'.$cell.'"></select>`;
-				document.querySelector("#select_'.$cell.'").innerHTML = `<option class="add_options" value="select_'.$cell.'" disabled>'.$cell.'</option>`;
-			</script>';
-			$fk_table = Input::exec_tr("SELECT ".$ID_NAME.",".$TITLE." FROM ". preg_replace('/^ид-/', '', $cell) .";");
-			$local_table = array_column($fk_table, $TITLE, $ID_NAME);
-			print_r($local_table);
-			foreach ($fk_table as $v => $c)
-			{
-				print_r($fk_table[$v]['ид'] . " : " . $c[$TITLE]);
-				echo "<br>";
-			}
-			print_r($local_table);
-			foreach ($fk_table as $row)
-			{
-				echo '<script>
-					document.querySelector("#select_'.$cell.'").innerHTML += `<option class="add_options" value="select_'.$row[$TITLE].'">'.$row[$TITLE].'</option>`;
-				</script>';
-			}
-		}
-		else
-		{
-			echo '<script>
-				document.querySelector("#add_form").innerHTML += `<input type="text" class="add_input" id="'. $cell .'" name="'. $cell .'" placeholder="'. $cell .'" required>`;
-			</script>';
-		}
+		echo '<script>
+			document.querySelector("#add_form").innerHTML += `<input type="text" class="add_input" id="'. $cell .'" name="'. $cell .'" placeholder="'. $cell .'" required>`;
+		</script>';
 	}
 	echo '<script>
 		document.querySelector("#add_form").innerHTML += `<input type="submit" class="add_input" id="добавить" name="добавить" value="ДОБАВИТЬ">`;
