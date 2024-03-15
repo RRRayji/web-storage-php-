@@ -213,7 +213,7 @@ main{
 	background-color: #2e3946;
 }
 /*			REM FORM		 */
-#rem_form{
+#rem_form, #notice_window{
 	display: none;
 	flex-wrap: nowrap;
 	position: absolute;
@@ -227,7 +227,7 @@ main{
 	border: 1px solid #38516d;
 	background-color: #111e26;
 }
-#rem_form div, #rem_confirm{
+#rem_form div, #rem_confirm, #notice_window{
 	font-family: 'JetBrains Mono', monospace;
 	font-size: 14px;
 	letter-spacing: 1px;
@@ -240,4 +240,12 @@ main{
 	cursor: pointer;
 	border: none;
 	background-color: #38516d;
+}
+#notice_window{
+	justify-content: center;
+	left: 0;
+    min-width: max-content;
+	max-width: 70svw;
+	margin: 0 50%;
+	transform: translateX(-50%);
 }

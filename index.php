@@ -4,7 +4,7 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Storage</title>
-	<link rel="stylesheet" type="text/css" href="/style/css/style.css?modified=7">
+	<link rel="stylesheet" type="text/css" href="/style/css/style.css?modified=9">
 </head>
 <body>
 	<header>
@@ -14,7 +14,7 @@
 				<!-- OPTIONS -->
 			</select>
 		</form>
-		<button type="button" id="remove" class="button" onclick="display_rem_form()">УДАЛИТЬ</button>
+		<button type="button" id="remove" class="button" onclick="display_rem_form();">УДАЛИТЬ</button>
 	</header>
 	<main>
 		<div id="scroller">
@@ -30,8 +30,10 @@
 		<!-- DATA -->
 	</form>
 
+	<div id="notice_window"></div>
+
 	<?php	include_once  'source/init.php';
-			include_once  'source/load.php'; update_table();	?>
-	<script src="style/js/script.js?modified=2"></script>
+			include_once  'source/load.php';	?>
+	<script src="style/js/script.js?modified=3"></script>
 </body>
 </html>

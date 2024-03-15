@@ -2,7 +2,7 @@
 $DB_NAME = "копеечка";
 $table_name = "состав_накладной";
 $id_name = "ид";
-$NODATAERR = "Ошибка значения.";
+$NODATAERR = "Ошибка: введите валидное значение.";
 $pk_is_ai = false;
 $fk_table = array();
 
@@ -34,8 +34,17 @@ function dis($string)
 	echo '<script>alert(`'. $string .'`)</script>';
 }
 
-function update_table($load_current = null)
+function update_table($args = null)
 {
+	if (!empty($args['notice']))
+	{
+		echo '<script>
+			window.addEventListener("load", function eventHandler(){
+				notify("'.$args['notice'].'");
+				this.removeEventListener("load", eventHandler);
+			});
+		</script>';
+	}
 	global $DB_NAME;
 	global $table_name;
 	global $id_name;
@@ -54,9 +63,9 @@ function update_table($load_current = null)
     }
 
     // Обновление текущих данных таблицы
-	if (!empty($load_current))
+	if (!empty($args['table']))
 	{
-		$table_name = $load_current;
+		$table_name = $args['table'];
 	}
 	else if (($_POST["table_name"] != null))
 	{
@@ -183,7 +192,8 @@ if (isset($_POST["добавить"]))
 
 	if (is_inputs_valid())
 	{
-		dis($NODATAERR);
+		update_table(array( 'table' => $table_name, 'notice' => $NODATAERR));
+		return;
 	}
 	else
 	{
@@ -203,7 +213,7 @@ if (isset($_POST["добавить"]))
 		$query .= $columns . ") VALUES(" . $values . ");";
 		Input::execonly_tr($query);
 	}
-	update_table($table_name);
+	update_table(array( 'table' => $table_name));
 }
 
 if (isset($_POST["rem_confirm"]))
@@ -213,13 +223,23 @@ if (isset($_POST["rem_confirm"]))
 	$selected_value = $_POST["selected_value"];
 	if (empty($table_name) || empty($selected_col) || empty($selected_value))
 	{
-		dis($NODATAERR);
+		update_table(array( 'table' => $table_name, 'notice' => $NODATAERR));
+		return;
 	}
 	else
 	{
 		if (is_varchar($selected_col)) $selected_value = "'" . $selected_value . "'";
+		//			CHECK FOR >1 MATCHES
+		$query = "SELECT COUNT(*) FROM " . $table_name . " WHERE " . $selected_col . " = " . $selected_value . ";";
+		$matches = Input::exec_tr($query);
+		$matches = $matches[0]['COUNT(*)'];
+		if ($matches > 1)
+		{
+			update_table(array( 'table' => $table_name, 'notice' => "Ошибка: найдено несколько совпадений. Выберите поле с уникальным значением."));
+			return;
+		}
 		$query = "DELETE FROM " . $table_name . " WHERE " . $selected_col . " = " . $selected_value . ";";
 		Input::execonly_tr($query);
 	}
-	update_table($table_name);
+	update_table(array( 'table' => $table_name));
 }

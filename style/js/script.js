@@ -4,6 +4,7 @@ var is_rem_active = false;
 var scroller = document.querySelector(`#scroller`);
 var add_form = document.querySelector(`#add_form`);
 var rem_form = document.querySelector(`#rem_form`);
+var notice = document.querySelector(`#notice_window`);
 var main = document.querySelector(`main`);
 var selected_class = document.querySelector("#selected_class");
 var selected_value = document.querySelector("#selected_value");
@@ -99,21 +100,74 @@ function display_add_form()
 
 function display_rem_form()
 {
-	if (is_add_active)
+	if (is_rem_active)
 	{
 		rem_form.style.display = `none`;
-		is_add_active = false;
+		is_rem_active = false;
 	}
 	else
 	{
 		rem_form.style.left = `${get_rect(main).width * 0.65 - 50}px`;
 
 		rem_form.style.display = `flex`;
-		is_add_active = true;
+		is_rem_active = true;
 
 		anim_opacity(rem_form);
 		anim_move(rem_form);
 	}
+}
+
+async function anim_hide_notice()
+{
+	for (let i = 1; i >= 0; i -= 0.1)
+	{
+		notice.style.opacity = `${i}`;
+		await wait(40);
+	}
+	notice.style.opacity = `0`;
+
+	notice.style.display = `none`;
+	notice.focused = false;
+	console.log(`notice.focused = ${notice.focused}`);
+	is_notice_active = false;
+}
+
+async function anim_move_notice()
+{
+	for (let i = 100; i > 90; i -= 1)
+	{
+		notice.style.top = `${i}svh`;
+		await wait(5);
+	}
+	await wait(2000);
+	notice.onmouseleave = function(){
+		this.focused = false;
+		this.onmouseleave = null;
+	};
+	while(notice.focused)
+	{
+		await wait(20);
+	}
+	anim_hide_notice();
+}
+
+notice.onclick = function(){
+	anim_hide_notice();
+};
+
+function notify(text)
+{
+	notice.onmouseenter = function(){
+		this.focused = true;
+		console.log(`notice.focused = ${this.focused}`);
+		this.onmouseenter = null;
+	};
+	notice.innerHTML =  text.toString().toUpperCase();
+	notice.style.display = `flex`;
+	is_notice_active = true;
+
+	anim_opacity(notice);
+	anim_move_notice();
 }
 
 
