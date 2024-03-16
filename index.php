@@ -33,7 +33,7 @@
 	<div id="notice_window"></div>
 
 	<?php	include_once  'source/init.php';
-			include_once  'source/load.php';	?>
+			include_once  'source/load.php';update_table();	?>
 	<script src="style/js/script.js?modified=3"></script>
 </body>
 </html>

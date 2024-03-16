@@ -4,8 +4,19 @@ $table_name = "состав_накладной";
 $id_name = "ид";
 $NODATAERR = "Ошибка: введите валидное значение.";
 $pk_is_ai = false;
-$fk_table = array();
+$index_cols = array();
 
+
+function find_next($column, $table)
+{
+	$buff_arr = array();
+	for ($i = 0; $i < count($table); ++$i)
+	{
+		$buff_arr[] = $table[$i]['COLUMN_NAME'];
+	}
+	$id = array_search($column, $buff_arr)+1;
+	return $buff_arr[($id >= count($buff_arr) ? ($id - 2) : $id)];
+}
 
 function is_in_array($value, $key, $array)
 {
@@ -21,7 +32,18 @@ function is_varchar($selected_col)
 	global $table_name;
 	$query = "SELECT DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='" . $table_name . "' AND COLUMN_NAME='" . $selected_col . "';";
 	$res = Input::exec_tr($query);
-	return strtolower($res[0]["DATA_TYPE"]) == "varchar";
+	return (strtolower($res[0]["DATA_TYPE"]) == "varchar" || strtolower($res[0]["DATA_TYPE"]) == "date");
+}
+
+function convert_sql_datatype($selected_col)
+{
+	global $table_name;
+	$query = "SELECT DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='" . $table_name . "' AND COLUMN_NAME='" . $selected_col . "';";
+	$res = Input::exec_tr($query);
+	$type = strtolower($res[0]["DATA_TYPE"]);
+	if ($type == "varchar") return "text";
+	else if ($type == "int") return "number\" min=\"1\"";
+	else return "date";
 }
 
 function to_upper($string)
@@ -49,7 +71,7 @@ function update_table($args = null)
 	global $table_name;
 	global $id_name;
 	global $pk_is_ai;
-	global $fk_table;
+	global $index_cols;
 
     // Получение списка таблиц
 	echo '<script>
@@ -104,29 +126,19 @@ function update_table($args = null)
 		if (is_in_array($col, 'COLUMN_NAME', $index_cols))
 		{
 			echo '<script>
-				document.querySelector("#add_form").innerHTML += `<input type="hidden" id="'. $col .'" name="'. $col .'" value="'. $col .'">`;
-				document.querySelector("#add_form").innerHTML += `<select class="add_input" id="select_'.$col.'" name="select_'.$col.'"></select>`;
-				document.querySelector("#select_'.$col.'").innerHTML = `<option class="add_options" disabled>'.$col.'</option>`;
+				document.querySelector("#add_form").innerHTML += `<select class="add_input" id="'.$col.'" name="'.$col.'"></select>`;
+				document.querySelector("#'.$col.'").innerHTML = `<option class="add_options" disabled>'.$col.'</option>`;
 			</script>';
 
 			$ref_tab = Input::exec_tr("SELECT REFERENCED_COLUMN_NAME, REFERENCED_TABLE_NAME FROM information_schema.KEY_COLUMN_USAGE WHERE TABLE_NAME = '".$table_name."' AND COLUMN_NAME='".$col."';");
 			$ref_col = $ref_tab[0]["REFERENCED_COLUMN_NAME"];
 			$ref_tab = $ref_tab[0]["REFERENCED_TABLE_NAME"];
 
+			$second_column = Input::exec_tr("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='" . $ref_tab . "';");
+			$second_column = find_next($ref_col, $second_column);
 
 
-
-
-
-
-
-
-
-
-
-
-
-
+			$fk_table_buff = Input::exec_tr("SELECT " . $ref_col . "," . $second_column . " FROM " . $ref_tab . ";");
 
 			/*			визуальное представление данных, принимаемых посредством input::exec_tr()
 			foreach ($fk_table as $v => $c)
@@ -134,19 +146,18 @@ function update_table($args = null)
 				print_r($fk_table[$v][$id_name] . " : " . $c[$second_column]);
 				echo "<br>";
 			}					поиск array_search("кг.", $fk_table)
-			
+			*/
 			foreach ($fk_table_buff as $row)
 			{
 				$fk_table[$row[$id_name]] = $row[$second_column];
 				echo '<script>
-					document.querySelector("#select_'.$col.'").innerHTML += `<option class="add_options">'.$row[$second_column].'</option>`;
+					document.querySelector("#'.$col.'").innerHTML += `<option class="add_options">'.$row[$second_column].'</option>`;
 				</script>';
 			}
-			*/
 		}
 		else
 		{
-			$type = (is_varchar($col)) ? "text" : "number";
+			$type = convert_sql_datatype($col);
 			echo '<script>
 				document.querySelector("#add_form").innerHTML += `<input type="'.$type.'" class="add_input" id="'. $col .'" name="'. $col .'" placeholder="'. $col .'" required>`;
 			</script>';
@@ -165,7 +176,6 @@ function update_table($args = null)
 	</script>';
 }
 
-update_table();
 
 
 function is_inputs_valid()
@@ -174,42 +184,55 @@ function is_inputs_valid()
 	global $id_name;
 	global $pk_is_ai;
 
-	$id_name = Input::exec_tr("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='". $table_name ."' AND COLUMN_KEY='PRI';");
+	$id_name = Input::exec_tr("SELECT COLUMN_NAME,EXTRA FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='". $table_name ."' AND COLUMN_KEY='PRI';");
+	if (is_in_array("auto_increment", 'EXTRA', $id_name)) $pk_is_ai = true;
 	$id_name = $id_name[0]['COLUMN_NAME'];
-	//										print_r($table_name . "<br>" . $id_name);
 	
 	foreach (Output::get_cols($table_name) as $col)
     {
 		if ($pk_is_ai && $col == $id_name) continue;
 		$s = trim($_POST[$col]);
-        if (empty($s)) return true;
+        if (empty($s) || $s == $col) return true;
     }
 	return false;
 }
 if (isset($_POST["добавить"]))
 {
-    $table_name = $_POST["a_table_name"];
-
+	$table_name = $_POST["a_table_name"];
 	if (is_inputs_valid())
 	{
-		update_table(array( 'table' => $table_name, 'notice' => $NODATAERR));
+		update_table(array('table' => $table_name, 'notice' => $NODATAERR));
 		return;
 	}
 	else
 	{
 		$query = "INSERT INTO " . $table_name . "(";
-	
+		
 		$columns = "";
 		$values = "";
+		$index_cols = Input::exec_tr("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '". $table_name ."' AND COLUMN_KEY='MUL';");
 		foreach (Output::get_cols($table_name) as $col)
 		{
 			if ($pk_is_ai && $col == $id_name) continue;
+
+			$value = $_POST[$col];
+			if (is_in_array($col, 'COLUMN_NAME', $index_cols))
+			{
+				$ref_tab = Input::exec_tr("SELECT REFERENCED_COLUMN_NAME, REFERENCED_TABLE_NAME FROM information_schema.KEY_COLUMN_USAGE WHERE TABLE_NAME = '".$table_name."' AND COLUMN_NAME='".$col."';");
+				$ref_col = $ref_tab[0]["REFERENCED_COLUMN_NAME"];
+				$ref_tab = $ref_tab[0]["REFERENCED_TABLE_NAME"];
+				$second_column = Input::exec_tr("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='" . $ref_tab . "';");
+				$second_column = find_next($ref_col, $second_column);
+				$value = Input::exec_tr("SELECT ".$ref_col." FROM ".$ref_tab." WHERE ".$second_column."='".$_POST[$col]."';");
+				$value = $value[0][$ref_col];
+			}
+
 			$columns .= $col . ", ";
-			$values .= (is_varchar($col)) ? "'" . $_POST[$col] . "', " : $_POST[$col] . ", ";
+			$values .= (is_varchar($col)) ? "'" . $value . "', " : $value . ", ";
 		}
 		$columns = rtrim($columns, ", ");
 		$values = rtrim($values, ", ");
-	
+		
 		$query .= $columns . ") VALUES(" . $values . ");";
 		Input::execonly_tr($query);
 	}
