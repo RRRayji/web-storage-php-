@@ -1,31 +1,134 @@
 var id_name = "ид";
 var is_add_active = false;
 var is_rem_active = false;
+var header = document.querySelector("header");
+var main = document.querySelector(`main`);
 var scroller = document.querySelector(`#scroller`);
 var add_form = document.querySelector(`#add_form`);
 var rem_form = document.querySelector(`#rem_form`);
 var notice = document.querySelector(`#notice_window`);
-var main = document.querySelector(`main`);
 var selected_class = document.querySelector("#selected_class");
 var selected_value = document.querySelector("#selected_value");
 var last_selected = null;
- 
+var rows = document.querySelectorAll(".row:not(:first-child)");
+var rowsHided = 0;
+var r = document.querySelectorAll(".row");
+var oldValue = null;
 
-window.addEventListener("load", function init(){
-	let rows = document.querySelectorAll(".row:not(:first-child)");
+
+function unhideAll()
+{
+	rows.forEach(row => {
+		row.style.display = `flex`;
+	});
+	rowsHided = 0;
+}
+
+function search(event)
+{
+	if (event.keyCode == 13)
+	{
+		let value = document.querySelector("#search").value.trim();
+		if (value.length < 2)
+		{
+			unhideAll();
+			notify("Не занимайся хуйнёй.");
+			return;
+		}
+		unhideAll();
+		let isIncludes;
+		rows.forEach(row => {
+			isIncludes = false;
+			let cells = row.querySelectorAll(".cell");
+			cells.forEach(cell => {
+				if (cell.innerHTML.includes(value)) isIncludes = true;
+			});
+			if (!isIncludes)
+			{
+				row.style.display = `none`;
+				++rowsHided;
+			}
+		});
+		console.log(`сокрыто: ${rowsHided} ?? ${rows.length}`);
+		if (rowsHided >= rows.length)
+		{
+			unhideAll();
+			notify("Не занимайся хуйнёй.");
+			return;
+		}
+	}
+}
+
+function myPrint()
+{
+	header.style.display = `none`;
+	main.style.maxHeight = "none";
+	main.style.maxWidth = `570px`;
+	main.style.maxWidth = `none`;
+	recalcCellWidth(24);
+	recalcRowHeight();
+	window.print();
+	header.style.display = `flex`;
+	recalcCellWidth(13);
+	main.style.maxHeight = "89svh";
+}
+
+function recalcCellWidth(value)
+{
+	let cw = r[0].querySelector(".cell").offsetWidth;
+	let v = (value == null) ? parseInt(cw*100/window.innerWidth)+1 : value;
+	console.log(v);
+	r.forEach(row => {
+		let cells = row.querySelectorAll(".cell");
+		cells.forEach(cell => {
+			cell.style.width = `${v}%`;
+		});
+	});
+}
+
+function recalcRowHeight()
+{
+	let isDataUpdated = false;
 	rows.forEach(row => {
 		let cells = row.querySelectorAll(".cell");
 		cells.forEach(cell => {
+			if (cell.offsetHeight > row.offsetHeight)
+			{
+				isDataUpdated = true;
+				row.style.height = `${cell.offsetHeight+2}px`;
+			}
+		});
+	});
+	if (isDataUpdated) recalcCellWidth();
+}
+
+window.onresize = recalcRowHeight;
+
+window.addEventListener("load", function init(){
+	rows.forEach(row => {
+		let cells = row.querySelectorAll(".cell");
+		cells.forEach(cell => {
+			if (cell.offsetHeight > row.offsetHeight) row.style.height = `${cell.offsetHeight+2}px`;
 			cell.onclick = function (){
 				selected_class.value = cell.className.replace("cell", "").trim();
 				selected_value.value = cell.innerHTML;
-				if (last_selected != null) last_selected.style.backgroundColor = "";
+				if (last_selected != null)
+				{
+					last_selected.style.backgroundColor = "";
+					last_selected.ondblclick = null;
+					//	...
+				}
 				last_selected = cell;
 				cell.style.backgroundColor = `#99b0ce`;
+				cell.ondblclick = () => {
+					oldValue = cell.innerHTML;
+					console.log(cell.outerHTML);
+					cell.outerHTML = `<input type=\"text\" id=\"editor\" name=\"editor\" class="${cell.className}" value=\"${oldValue}\"></input>`;
+					cell.focus();
+				};
 			};
 		});
 	});
-	let len = document.querySelector(".row:first-child").querySelectorAll(".cell").length;
 	this.removeEventListener("load", init);
 });
 

@@ -5,9 +5,7 @@ class SQLData {
     protected static $servername = "localhost";
     protected static $dbname = "копеечка";
     protected static $user = "root";
-    protected static $password = "";
-
-	public static function get_dbname() { return $dbname; }
+    protected static $password = "root";
 
 	public static function Init()
 	{
@@ -19,7 +17,7 @@ class SQLData {
 		catch (PDOException $e)		//	Отлавливаем подключение к базе данных и, если её не существует
 		{									//	на устройстве, производим восстановление по backup-файлу.
 			echo "Connection error:\n" . $e->getMessage();
-			self::$conn = new PDO("mysql:host=localhost;dbname=mysql", "root", "");
+			self::$conn = new PDO("mysql:host=localhost;dbname=mysql", self::$user, self::$password);
 			echo '<script>alert("Error: someting went wrong!");</script>';
 			self::$conn->exec("CREATE DATABASE " . self::$dbname);
 			echo '<script>alert("The database creation...");</script>';

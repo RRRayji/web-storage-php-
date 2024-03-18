@@ -71,6 +71,21 @@ header{
 	transition: .5s all;
 	opacity: 0.7;
 }
+#search{
+	cursor: text;
+	font-family: 'JetBrains Mono', monospace;
+	font-size: 14px;
+	letter-spacing: 1px;
+	padding: 0 10px;
+}
+#search:hover{
+	-webkit-transition: .5s all;
+	-moz-transition: .5s all;
+	-ms-transition: .5s all;
+	transition: .5s all;
+	opacity: 1;
+	background-color: #516885;
+}
 #select_form{
 	width: 15%;
 	min-width: 120px;
@@ -119,6 +134,7 @@ main{
 	justify-content: center;
 	min-height: 30px;
 	height: 5svh;
+	overflow-y: hidden;
 	border-top: 1px solid #111e26;
 }
 .row:first-child{
@@ -151,6 +167,7 @@ main{
 .cell:first-child{
 	border-radius: inherit;
 	border-bottom-right-radius: 0;
+	border-left: 1px solid #111e26;
 }
 .cell:last-child{
 	border-radius: inherit;
