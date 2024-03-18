@@ -9,15 +9,9 @@ var main = document.querySelector(`main`);
 var selected_class = document.querySelector("#selected_class");
 var selected_value = document.querySelector("#selected_value");
 var last_selected = null;
+ 
 
-
-/*
-	var sel = document.querySelector("#select_ид-товар");
-	console.log(sel.options[sel.selectedIndex].innerHTML);	//	moloko
-*/
-
-document.querySelector("body").onmouseenter = function ()
-{
+window.addEventListener("load", function init(){
 	let rows = document.querySelectorAll(".row:not(:first-child)");
 	rows.forEach(row => {
 		let cells = row.querySelectorAll(".cell");
@@ -32,8 +26,8 @@ document.querySelector("body").onmouseenter = function ()
 		});
 	});
 	let len = document.querySelector(".row:first-child").querySelectorAll(".cell").length;
-	scroller.onmouseenter = null;
-};
+	this.removeEventListener("load", init);
+});
 
 function wait(ms)
 {
@@ -128,7 +122,6 @@ async function anim_hide_notice()
 
 	notice.style.display = `none`;
 	notice.focused = false;
-	console.log(`notice.focused = ${notice.focused}`);
 	is_notice_active = false;
 }
 
@@ -159,7 +152,6 @@ function notify(text)
 {
 	notice.onmouseenter = function(){
 		this.focused = true;
-		console.log(`notice.focused = ${this.focused}`);
 		this.onmouseenter = null;
 	};
 	notice.innerHTML =  text.toString().toUpperCase();

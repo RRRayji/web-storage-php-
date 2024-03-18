@@ -100,7 +100,7 @@ main{
 	justify-content: center;
 	border-radius: 0 0 20px 20px;
 	margin: 0 2svw 3svh;
-	min-height: 400px;
+	min-height: 395px;
 	min-width: 570px;
 	max-height: 89svh;		/*	100-3-5-2-(1?)	*/
 	overflow: hidden;

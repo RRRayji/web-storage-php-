@@ -241,12 +241,13 @@ if (isset($_POST["добавить"]))
 
 if (isset($_POST["rem_confirm"]))
 {
+	//dis("pk is ai: ".$pk_is_ai);
 	$table_name = $_POST["a_table_name"];
 	$selected_col = $_POST["selected_class"];
 	$selected_value = $_POST["selected_value"];
 	if (empty($table_name) || empty($selected_col) || empty($selected_value))
 	{
-		update_table(array( 'table' => $table_name, 'notice' => $NODATAERR));
+		update_table(array( 'table' => $table_name, 'notice' => "Ошибка: значение не выбрано."));
 		return;
 	}
 	else
@@ -258,10 +259,14 @@ if (isset($_POST["rem_confirm"]))
 		$matches = $matches[0]['COUNT(*)'];
 		if ($matches > 1)
 		{
-			update_table(array( 'table' => $table_name, 'notice' => "Ошибка: найдено несколько совпадений. Выберите поле с уникальным значением."));
-			return;
+			$id_name = Input::exec_tr("SELECT EXTRA FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='". $table_name ."' AND COLUMN_KEY='PRI';");
+			if (is_in_array("auto_increment", 'EXTRA', $id_name))
+			{
+				update_table(array( 'table' => $table_name, 'notice' => "Ошибка: найдено несколько совпадений. Выберите поле с уникальным значением."));
+				return;
+			}
 		}
-		$query = "DELETE FROM " . $table_name . " WHERE " . $selected_col . " = " . $selected_value . ";";
+		$query = "DELETE FROM " . $table_name . " WHERE " . $selected_col . " = " . $selected_value . " LIMIT 1;";
 		Input::execonly_tr($query);
 	}
 	update_table(array( 'table' => $table_name));
