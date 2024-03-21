@@ -4,7 +4,7 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Storage</title>
-	<link rel="stylesheet" type="text/css" href="/style/css/style.css?modified=15">
+	<link rel="stylesheet" type="text/css" href="/style/css/style.css?modified=25">
 </head>
 <body>
 	<header>
@@ -32,10 +32,18 @@
 		<!-- DATA -->
 	</form>
 
+	<form method="POST" action="" id="edit_form" name="edit_form">
+		<input type="hidden" id="edit_table" name="a_table_name">
+		<input type="hidden" id="edit_column" name="edit_column">
+		<input type="hidden" id="edited_value" name="edited_value">
+		<input type="hidden" id="new_value" name="new_value">
+		<input type="submit" id="edit_button" name="edit_button" value="✓">
+	</form>
+
 	<div id="notice_window"></div>
 
 	<?php	include_once  'source/init.php';
 			include_once  'source/load.php';update_table();	?>
-	<script src="style/js/script.js?modified=11"></script>
+	<script src="style/js/script.js?modified=26"></script>
 </body>
 </html>

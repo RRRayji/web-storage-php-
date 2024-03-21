@@ -16,9 +16,8 @@ class SQLData {
 		}
 		catch (PDOException $e)		//	Отлавливаем подключение к базе данных и, если её не существует
 		{									//	на устройстве, производим восстановление по backup-файлу.
-			echo "Connection error:\n" . $e->getMessage();
 			self::$conn = new PDO("mysql:host=localhost;dbname=mysql", self::$user, self::$password);
-			echo '<script>alert("Error: someting went wrong!");</script>';
+			echo '<script>alert("Error: connection lost.");</script>';
 			self::$conn->exec("CREATE DATABASE " . self::$dbname);
 			echo '<script>alert("The database creation...");</script>';
 			
@@ -80,7 +79,6 @@ class Output extends SQLData
 
 	public static function get_table_data($table_name)
 	{
-		$count = (int)Input::exec_tr("SELECT COUNT(COLUMN_NAME) FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '$table_name'");
 		$table_schema = '';
 		foreach (Input::exec_tr("SELECT * FROM $table_name") as $col => $row)
 		{

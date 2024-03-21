@@ -9,11 +9,22 @@ var rem_form = document.querySelector(`#rem_form`);
 var notice = document.querySelector(`#notice_window`);
 var selected_class = document.querySelector("#selected_class");
 var selected_value = document.querySelector("#selected_value");
-var last_selected = null;
+var lastSelected = null;
+var lastEdited = null;
 var rows = document.querySelectorAll(".row:not(:first-child)");
 var rowsHided = 0;
 var r = document.querySelectorAll(".row");
-var oldValue = null;
+var editButton = document.querySelector("#edit_button");
+var tableName = document.querySelector("#first_element");
+var editTable = document.querySelector("#edit_table");
+var editColumn = document.querySelector("#edit_column");
+var oldValue = document.querySelector("#edited_value");
+var newValue = document.querySelector("#new_value");
+var remove = document.querySelector("#remove");
+var removeState = false;
+var remConfirm = document.querySelector("#rem_confirm");
+
+var searchErrorText = "Неопределённый критерий поиска. (введите 2+ символа)";
 
 
 function unhideAll()
@@ -26,13 +37,13 @@ function unhideAll()
 
 function search(event)
 {
-	if (event.keyCode == 13)
+	if (event.key == "Enter")
 	{
-		let value = document.querySelector("#search").value.trim();
+		let value = document.querySelector("#search").value.trim().toLowerCase();
 		if (value.length < 2)
 		{
 			unhideAll();
-			notify("Не занимайся хуйнёй.");
+			notify(searchErrorText);
 			return;
 		}
 		unhideAll();
@@ -41,7 +52,7 @@ function search(event)
 			isIncludes = false;
 			let cells = row.querySelectorAll(".cell");
 			cells.forEach(cell => {
-				if (cell.innerHTML.includes(value)) isIncludes = true;
+				if (cell.innerHTML.toLowerCase().includes(value)) isIncludes = true;
 			});
 			if (!isIncludes)
 			{
@@ -49,11 +60,11 @@ function search(event)
 				++rowsHided;
 			}
 		});
-		console.log(`сокрыто: ${rowsHided} ?? ${rows.length}`);
+		//console.log(`сокрыто: ${rowsHided} ?? ${rows.length}`);
 		if (rowsHided >= rows.length)
 		{
 			unhideAll();
-			notify("Не занимайся хуйнёй.");
+			notify(searchErrorText);
 			return;
 		}
 	}
@@ -77,7 +88,6 @@ function recalcCellWidth(value)
 {
 	let cw = r[0].querySelector(".cell").offsetWidth;
 	let v = (value == null) ? parseInt(cw*100/window.innerWidth)+1 : value;
-	console.log(v);
 	r.forEach(row => {
 		let cells = row.querySelectorAll(".cell");
 		cells.forEach(cell => {
@@ -104,28 +114,69 @@ function recalcRowHeight()
 
 window.onresize = recalcRowHeight;
 
+function setData()
+{
+	editTable.value = tableName.innerHTML;
+	editColumn.value = selected_class.value;
+	oldValue.value = lastEdited.innerHTML;
+	newValue.value = document.querySelector("#editor").value;
+	console.log("edited");
+	editButton.click();
+}
+
+document.body.addEventListener('keydown', function(e) {
+	if (e.key == "Escape") {
+		if (lastEdited != null)
+		{
+			document.querySelector("#editor").outerHTML = `<div class=\"${lastEdited.className}\">${lastEdited.innerHTML}</div>`;
+			lastEdited = null;
+		}
+		if (lastSelected != null)
+		{
+			lastSelected.style.backgroundColor = "";
+			lastSelected.ondblclick = null;
+		}
+	}
+	else if (e.key == "Delete")
+	{
+		if (removeState == false)
+		{
+			remove.click();
+			removeState = true;
+		}
+		else if (removeState == true)
+		{
+			remConfirm.click();
+			removeState = false;
+		}
+	}
+});
+
 window.addEventListener("load", function init(){
 	rows.forEach(row => {
 		let cells = row.querySelectorAll(".cell");
 		cells.forEach(cell => {
 			if (cell.offsetHeight > row.offsetHeight) row.style.height = `${cell.offsetHeight+2}px`;
-			cell.onclick = function (){
+			cell.onclick = function cellClick(){
 				selected_class.value = cell.className.replace("cell", "").trim();
 				selected_value.value = cell.innerHTML;
-				if (last_selected != null)
+				if (lastSelected != null)
 				{
-					last_selected.style.backgroundColor = "";
-					last_selected.ondblclick = null;
-					//	...
+					lastSelected.style.backgroundColor = "";
+					lastSelected.ondblclick = null;
 				}
-				last_selected = cell;
 				cell.style.backgroundColor = `#99b0ce`;
 				cell.ondblclick = () => {
-					oldValue = cell.innerHTML;
-					console.log(cell.outerHTML);
-					cell.outerHTML = `<input type=\"text\" id=\"editor\" name=\"editor\" class="${cell.className}" value=\"${oldValue}\"></input>`;
+					if (lastEdited != null)
+					{
+						document.querySelector("#editor").outerHTML = `<div class=\"${lastEdited.className}\">${lastEdited.innerHTML}</div>`;
+						lastEdited = null;
+					}
+					lastEdited = cell;
+					cell.outerHTML = `<input type=\"text\" id=\"editor\" class="cell ${selected_class.value}" placeholder=\"${selected_value.value}\" onchange=\"setData()\"></input>`;
 					cell.focus();
 				};
+				lastSelected = cell;
 			};
 		});
 	});
@@ -178,7 +229,7 @@ function display_add_form()
 	else
 	{
 		clear_info();
-		add_form.style.left = `${get_rect(main).width * 0.35 - 120}px`;
+		add_form.style.left = `${get_rect(main).width * 0.19 - 120}px`;
 		
 		add_form.style.display = `inline-grid`;
 		is_add_active = true;
@@ -204,7 +255,7 @@ function display_rem_form()
 	}
 	else
 	{
-		rem_form.style.left = `${get_rect(main).width * 0.65 - 50}px`;
+		rem_form.style.left = `${get_rect(main).width * 0.78 - 50}px`;
 
 		rem_form.style.display = `flex`;
 		is_rem_active = true;
@@ -253,6 +304,9 @@ notice.onclick = function(){
 
 function notify(text)
 {
+	notice.style.opacity = `0`;
+	notice.style.display = `none`;
+
 	notice.onmouseenter = function(){
 		this.focused = true;
 		this.onmouseenter = null;

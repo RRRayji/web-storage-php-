@@ -22,7 +22,7 @@ function is_in_array($value, $key, $array)
 {
 	foreach ($array as $el)
 	{
-		if (strtolower($el[$key]) == $value) return true;
+		if (strtolower($el[$key]) == strtolower($value)) return true;
 	}
 	return false;
 }
@@ -123,7 +123,17 @@ function update_table($args = null)
 			</script>';
 			continue;
 		}
-		if (is_in_array($col, 'COLUMN_NAME', $index_cols))
+		$query = "SELECT COLUMN_COMMENT FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='".$table_name."' AND COLUMN_NAME='".$col."';";
+		$query = Input::exec_tr($query);
+		$is_inactive = is_in_array("inactive", "COLUMN_COMMENT", $query);
+		if ($is_inactive)
+		{
+			echo '<script>
+				document.querySelector("#add_form").innerHTML += `<input type="hidden" name="'.$col.'" value="1">`;
+			</script>';
+			continue;
+		}
+		else if (is_in_array($col, 'COLUMN_NAME', $index_cols))
 		{
 			echo '<script>
 				document.querySelector("#add_form").innerHTML += `<select class="add_input" id="'.$col.'" name="'.$col.'"></select>`;
@@ -234,7 +244,14 @@ if (isset($_POST["добавить"]))
 		$values = rtrim($values, ", ");
 		
 		$query .= $columns . ") VALUES(" . $values . ");";
-		Input::execonly_tr($query);
+		try
+		{
+			Input::execonly_tr($query);
+		}
+		catch(Exception $e)
+		{
+			update_table(array( 'table' => $table_name,'notice' => "Ошибка: недостаточно прав."));
+		}
 	}
 	update_table(array( 'table' => $table_name));
 }
@@ -267,7 +284,32 @@ if (isset($_POST["rem_confirm"]))
 			}
 		}
 		$query = "DELETE FROM " . $table_name . " WHERE " . $selected_col . " = " . $selected_value . " LIMIT 1;";
-		Input::execonly_tr($query);
+		try
+		{
+			Input::execonly_tr($query);
+		}
+		catch(Exception $e)
+		{
+			update_table(array( 'table' => $table_name,'notice' => "Ошибка: на этот элемент есть ссылка."));
+		}
 	}
 	update_table(array( 'table' => $table_name));
+}
+
+if (isset($_POST["edit_button"]))
+{
+	$table_name = $_POST['a_table_name'];
+	$column = $_POST['edit_column'];
+	$old_value = $_POST['edited_value'];
+	$new_value = $_POST['new_value'];
+	$query = "UPDATE ".$table_name." SET ".$column."=". ((is_varchar($new_value)) ? "'".$new_value."'" : $new_value) ." WHERE ".$column."=". ((is_varchar($old_value)) ? "'".$old_value."'" : $old_value) .";";
+	try
+	{
+		Input::execonly_tr($query);
+		update_table(array( 'table' => $table_name));
+	}
+	catch(Exception $e)
+	{
+		update_table(array( 'table' => $table_name,'notice' => "Ошибка: идентификатор не определён."));
+	}
 }
