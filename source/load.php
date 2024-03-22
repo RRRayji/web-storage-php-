@@ -299,17 +299,29 @@ if (isset($_POST["rem_confirm"]))
 if (isset($_POST["edit_button"]))
 {
 	$table_name = $_POST['a_table_name'];
+	$id_name = $_POST['edit_id_name'];
+	$id_value = $_POST['edit_id'];
+	if (is_varchar($id_name)) $id_value = "'" .$id_value. "'";
 	$column = $_POST['edit_column'];
 	$old_value = $_POST['edited_value'];
 	$new_value = $_POST['new_value'];
-	$query = "UPDATE ".$table_name." SET ".$column."=". ((is_varchar($new_value)) ? "'".$new_value."'" : $new_value) ." WHERE ".$column."=". ((is_varchar($old_value)) ? "'".$old_value."'" : $old_value) .";";
+	if (is_varchar($column))
+	{
+		if (!empty($old_value)) $old_value = "'".$old_value."'";
+		$new_value = "'".$new_value."'";
+	}
+
+	$query = "UPDATE ".$table_name." SET ".$column."=". $new_value ." WHERE " .$id_name."=". $id_value;
+	if (!empty($old_value)) $query .= " AND ".$column."=". $old_value;
 	try
 	{
+		dis($query);
 		Input::execonly_tr($query);
 		update_table(array( 'table' => $table_name));
 	}
 	catch(Exception $e)
 	{
+		print_r($_POST);
 		update_table(array( 'table' => $table_name,'notice' => "Ошибка: идентификатор не определён."));
 	}
 }

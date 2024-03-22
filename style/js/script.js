@@ -11,12 +11,15 @@ var selected_class = document.querySelector("#selected_class");
 var selected_value = document.querySelector("#selected_value");
 var lastSelected = null;
 var lastEdited = null;
+var lastEditedRow = null;
 var rows = document.querySelectorAll(".row:not(:first-child)");
 var rowsHided = 0;
 var r = document.querySelectorAll(".row");
 var editButton = document.querySelector("#edit_button");
 var tableName = document.querySelector("#first_element");
 var editTable = document.querySelector("#edit_table");
+var editIdName = document.querySelector("#edit_id_name");
+var editId = document.querySelector("#edit_id");
 var editColumn = document.querySelector("#edit_column");
 var oldValue = document.querySelector("#edited_value");
 var newValue = document.querySelector("#new_value");
@@ -117,6 +120,8 @@ window.onresize = recalcRowHeight;
 function setData()
 {
 	editTable.value = tableName.innerHTML;
+	editIdName.value = lastEditedRow.className.replace("cell", "").trim();
+	editId.value = lastEditedRow.innerHTML;
 	editColumn.value = selected_class.value;
 	oldValue.value = lastEdited.innerHTML;
 	newValue.value = document.querySelector("#editor").value;
@@ -171,8 +176,11 @@ window.addEventListener("load", function init(){
 					{
 						document.querySelector("#editor").outerHTML = `<div class=\"${lastEdited.className}\">${lastEdited.innerHTML}</div>`;
 						lastEdited = null;
+						lastEditedRow = null;
 					}
 					lastEdited = cell;
+					lastEditedRow = row.firstChild;
+					console.log(row.firstChild);
 					cell.outerHTML = `<input type=\"text\" id=\"editor\" class="cell ${selected_class.value}" placeholder=\"${selected_value.value}\" onchange=\"setData()\"></input>`;
 					cell.focus();
 				};

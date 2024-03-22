@@ -34,6 +34,8 @@
 
 	<form method="POST" action="" id="edit_form" name="edit_form">
 		<input type="hidden" id="edit_table" name="a_table_name">
+		<input type="hidden" id="edit_id_name" name="edit_id_name">
+		<input type="hidden" id="edit_id" name="edit_id">
 		<input type="hidden" id="edit_column" name="edit_column">
 		<input type="hidden" id="edited_value" name="edited_value">
 		<input type="hidden" id="new_value" name="new_value">
@@ -44,6 +46,6 @@
 
 	<?php	include_once  'source/init.php';
 			include_once  'source/load.php';update_table();	?>
-	<script src="style/js/script.js?modified=26"></script>
+	<script src="style/js/script.js?modified=27"></script>
 </body>
 </html>
