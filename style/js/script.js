@@ -1,4 +1,3 @@
-var id_name = "ид";
 var is_add_active = false;
 var is_rem_active = false;
 var header = document.querySelector("header");
@@ -26,6 +25,8 @@ var newValue = document.querySelector("#new_value");
 var remove = document.querySelector("#remove");
 var removeState = false;
 var remConfirm = document.querySelector("#rem_confirm");
+var sq = document.querySelector("#select_query");
+var ft = document.querySelector("#fromto_form");
 
 var searchErrorText = "Неопределённый критерий поиска. (введите 2+ символа)";
 
@@ -79,12 +80,14 @@ function myPrint()
 	main.style.maxHeight = "none";
 	main.style.maxWidth = `570px`;
 	main.style.maxWidth = `none`;
-	recalcCellWidth(24);
+	main.style.borderRadius = `0`;
+	recalcCellWidth(`24%`);
 	recalcRowHeight();
 	window.print();
 	header.style.display = `flex`;
-	recalcCellWidth(13);
+	recalcCellWidth(`13%`);
 	main.style.maxHeight = "89svh";
+	main.style.borderRadius = `0 0 20px 20px`;
 }
 
 function recalcCellWidth(value)
@@ -94,7 +97,7 @@ function recalcCellWidth(value)
 	r.forEach(row => {
 		let cells = row.querySelectorAll(".cell");
 		cells.forEach(cell => {
-			cell.style.width = `${v}%`;
+			cell.style.width = `${v}`;
 		});
 	});
 }
@@ -158,6 +161,7 @@ document.body.addEventListener('keydown', function(e) {
 });
 
 window.addEventListener("load", function init(){
+	this.removeEventListener("load", init);
 	rows.forEach(row => {
 		let cells = row.querySelectorAll(".cell");
 		cells.forEach(cell => {
@@ -188,7 +192,16 @@ window.addEventListener("load", function init(){
 			};
 		});
 	});
-	this.removeEventListener("load", init);
+	let pix = 150;
+	let lc = document.querySelector(".row:first-child").querySelector(".cell:last-child");
+	let sw = lc.scrollWidth;
+	let cw = get_rect(lc).width;
+	while (cw < sw && pix < 200)
+	{
+		cw = get_rect(lc).width;
+		recalcCellWidth(`${pix}px`);
+		pix += 10;
+	}
 });
 
 function wait(ms)
@@ -273,6 +286,20 @@ function display_rem_form()
 	}
 }
 
+function display_fromto_form()
+{
+	switch (sq.value)
+	{
+	case "dates":
+		ft.style.display = `flex`;
+		anim_opacity(ft);
+		anim_move(ft);
+		break;
+	case "":
+		ft.style.display = `none`;
+	}
+}
+
 async function anim_hide_notice()
 {
 	for (let i = 1; i >= 0; i -= 0.1)
@@ -326,7 +353,6 @@ function notify(text)
 	anim_opacity(notice);
 	anim_move_notice();
 }
-
 
 // Обрабатываем событие отправки формы
 /*

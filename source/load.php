@@ -1,7 +1,6 @@
 <?php
 $DB_NAME = "копеечка";
-$table_name = "состав_накладной";
-$id_name = "ид";
+$table_name = "товары";
 $NODATAERR = "Ошибка: введите валидное значение.";
 $pk_is_ai = false;
 $index_cols = array();
@@ -69,7 +68,6 @@ function update_table($args = null)
 	}
 	global $DB_NAME;
 	global $table_name;
-	global $id_name;
 	global $pk_is_ai;
 	global $index_cols;
 
@@ -98,9 +96,8 @@ function update_table($args = null)
     </script>';
 
     echo '<script>
-        var scroller = document.querySelector(`#scroller`);
-        scroller.innerHTML = `'. Output::get_table_cols($table_name) .'`;
-        scroller.innerHTML += `'. Output::get_table_data($table_name) .'`;
+        document.querySelector(`#scroller`).innerHTML = `'. Output::get_table_cols($table_name) .'`;
+        document.querySelector(`#scroller`).innerHTML += `'. Output::get_table_data($table_name) .'`;
     </script>';
 
     // упд скрытых полей форм
@@ -290,6 +287,7 @@ if (isset($_POST["rem_confirm"]))
 		}
 		catch(Exception $e)
 		{
+			//print_r($query);
 			update_table(array( 'table' => $table_name,'notice' => "Ошибка: на этот элемент есть ссылка."));
 		}
 	}
@@ -315,7 +313,7 @@ if (isset($_POST["edit_button"]))
 	if (!empty($old_value)) $query .= " AND ".$column."=". $old_value;
 	try
 	{
-		dis($query);
+		//dis($query);
 		Input::execonly_tr($query);
 		update_table(array( 'table' => $table_name));
 	}
@@ -325,3 +323,50 @@ if (isset($_POST["edit_button"]))
 		update_table(array( 'table' => $table_name,'notice' => "Ошибка: идентификатор не определён."));
 	}
 }
+
+if (isset($_POST['ft_confirm_button']) && 
+	!empty($_POST['from']) && !empty($_POST['to']) && 
+	$_POST['to'] > $_POST['from']
+)
+{
+	$table = Input::exec_tr("SELECT №_накладной, дата, сумма, наименование_поставщика FROM приход WHERE дата BETWEEN '".$_POST['from']."' AND '".$_POST['to']."';");
+	if (count($table) < 1)
+	{
+		update_table(array( 'table' => $table_name,'notice' => "Внимание: нет совпадений по выбранному периоду."));
+		return;
+	}
+	$cols = array_keys($table[0]);
+
+	$cols_schema = '<div class=\"row\">';
+	foreach ($cols as $cell)
+	{
+		$cols_schema .= '<div class="cell ' . $cell . '">' . $cell . '</div>';
+	}
+	$cols_schema .= '</div>';
+
+	$table_schema = '';
+	foreach ($table as $col => $row)
+	{
+		$table_schema .= '<div class="row">';
+		foreach ($row as $col => $cell)
+		{
+			$table_schema .= '<div class="cell '. $col .'">' . $cell . '</div>';
+		}
+		$table_schema .= '</div>';
+	}
+	echo '<script>
+		document.querySelector("#scroller").innerHTML = `'. $cols_schema .'`;
+		document.querySelector("#scroller").innerHTML += `'. $table_schema .'`;
+    </script>';
+	echo '<script>
+		document.querySelector(`#table_name`).innerHTML = `<option value="" name="first_element" id="first_element"></option>`;
+	</script>';
+    $tables = Input::exec_tr("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA='".$DB_NAME."';");
+    foreach ($tables as $name) {
+        echo '<script>
+            document.querySelector(`#table_name`).innerHTML += `<option value="'. $name['TABLE_NAME'] .'">'. to_upper($name['TABLE_NAME']) .'</option>`;
+        </script>';
+    }
+	return;
+}
+update_table();
