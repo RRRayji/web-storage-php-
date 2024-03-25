@@ -4,7 +4,7 @@ $table_name = "товары";
 $NODATAERR = "Ошибка: введите валидное значение.";
 $pk_is_ai = false;
 $index_cols = array();
-
+$tables = Input::exec_tr("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA='".$DB_NAME."';");
 
 function find_next($column, $table)
 {
@@ -353,10 +353,10 @@ function query_table($table)
 
 function set_name($value)
 {
+	global $tables;
 	echo '<script>
 		document.querySelector(`#table_name`).innerHTML = `<option value="" name="first_element" id="first_element"></option>`;
 	</script>';
-    $tables = Input::exec_tr("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA='".$DB_NAME."';");
     foreach ($tables as $name) {
         echo '<script>
             document.querySelector(`#table_name`).innerHTML += `<option value="'. $name['TABLE_NAME'] .'">'. to_upper($name['TABLE_NAME']) .'</option>`;
@@ -372,7 +372,7 @@ if (isset($_POST['ft_confirm_button']) &&
 	$_POST['to'] > $_POST['from']
 )
 {
-	$table = Input::exec_tr("SELECT №_накладной, дата, сумма, наименование_поставщика FROM приход WHERE дата BETWEEN '".$_POST['from']."' AND '".$_POST['to']."';");
+	$table = Input::exec_tr("SELECT №_накладной, дата, сумма, наименование_поставщика FROM приход WHERE дата BETWEEN '".$_POST['from']."' AND '".$_POST['to']."' ORDER BY сумма DESC;");
 	if (count($table) < 1)
 	{
 		update_table(array( 'table' => $table_name,'notice' => "Внимание: нет совпадений по выбранному периоду."));
@@ -380,6 +380,21 @@ if (isset($_POST['ft_confirm_button']) &&
 	}
 	query_table($table);
 	set_name($_POST['from'].'=>'.$_POST['to']);
+	return;
+}
+if (isset($_POST['rashod_button']) && 
+	!empty($_POST['r_from']) && !empty($_POST['r_to']) && 
+	$_POST['r_to'] > $_POST['r_from']
+)
+{
+	$table = Input::exec_tr("SELECT №_заявки, тип_расхода, дата, сумма, название_склада FROM расход WHERE дата BETWEEN '".$_POST['r_from']."' AND '".$_POST['r_to']."' ORDER BY сумма DESC;");
+	if (count($table) < 1)
+	{
+		update_table(array( 'table' => $table_name,'notice' => "Внимание: нет совпадений по выбранному периоду."));
+		return;
+	}
+	query_table($table);
+	set_name($_POST['r_from'].'=>'.$_POST['r_to']);
 	return;
 }
 if (isset($_POST['fin_confirm_button']) && !empty($_POST['month']))
@@ -416,6 +431,21 @@ if(isset($_POST['top10_button']))
 	}
 	query_table($table);
 	set_name("ТОП 10 ПРОДАЖ");
+	return;
+}
+if (isset($_POST['categ_rep_button']))
+{
+	$table = Input::exec_tr("SELECT категория, COUNT(*) AS количество_товаров
+		FROM товары
+		GROUP BY категория;
+	");
+	if (count($table) < 1)
+	{
+		update_table(array( 'table' => $table_name,'notice' => "Внимание: товары не найдены."));
+		return;
+	}
+	query_table($table);
+	set_name("ОТЧЁТ ПО КАТЕГОРИЯМ");
 	return;
 }
 update_table();

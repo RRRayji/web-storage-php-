@@ -27,10 +27,12 @@ var removeState = false;
 var remConfirm = document.querySelector("#rem_confirm");
 var sq = document.querySelector("#select_query");
 var ft = document.querySelector("#fromto_form");
+var rf = document.querySelector("#rashod_form");
 var fin = document.querySelector("#finance");
 var tt = document.querySelector("#top10_button");
+var cr = document.querySelector("#categ_rep_button");
 
-var searchErrorText = "Неопределённый критерий поиска. (введите 2+ символа)";
+var searchErrorText = "Неопределённый критерий поиска. (введите 1+ символ)";
 
 
 function unhideAll()
@@ -46,7 +48,7 @@ function search(event)
 	if (event.key == "Enter")
 	{
 		let value = document.querySelector("#search").value.trim().toLowerCase();
-		if (value.length < 2)
+		if (value.length < 1)
 		{
 			unhideAll();
 			notify(searchErrorText);
@@ -304,6 +306,11 @@ function display_fromto_form()
 		anim_opacity(ft);
 		anim_move(ft);
 		break;
+	case "rashod":
+		rf.style.display = `flex`;
+		anim_opacity(ft);
+		anim_move(ft);
+		break;
 	case "finance":
 		fin.style.display = `flex`;
 		anim_opacity(fin);
@@ -313,6 +320,12 @@ function display_fromto_form()
 		tt.value = 'select';
 		tt.click();
 		tt.value = null;
+		break;
+	case "categ_rep":
+		cr.value = 'catrep';
+		cr.click();
+		cr.value = null;
+		break;
 	}
 }
 

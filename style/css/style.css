@@ -182,7 +182,7 @@ main{
 	justify-content: left;
 }
 /* 			ADD FORM		 */
-#add_form, #fromto_form, #finance{
+#add_form, #fromto_form, #finance, #rashod_form{
 	display: none;
 	position: absolute;
 	left: 25.5svw;
@@ -284,13 +284,13 @@ main{
 	background-color: #38516d;
 	transform: translateY(-50%);
 }
-#fromto_form, #finance{
+#fromto_form, #finance, #rashod_form{
 	display: none;
 	min-width: 70px;
 	min-height: 40px;
 	padding: 10px;
 }
-#fromto_form input, #finance input{
+#fromto_form input, #finance input, #rashod_form input{
 	margin: 0;
 	margin-right: 10px;
 	min-width: 4svw;
@@ -303,6 +303,10 @@ main{
     color: #e0e1dd;
     background-color: #38516d;
 }
-#fromto_form input:last-child, #finance input:last-child{
+#fromto_form input:last-child, #finance input:last-child, #rashod_form input:last-child{
 	margin-right: 0;
+}
+.hidden-input{
+	display: none;
+	position: absolute;
 }
