@@ -324,20 +324,11 @@ if (isset($_POST["edit_button"]))
 	}
 }
 
-if (isset($_POST['ft_confirm_button']) && 
-	!empty($_POST['from']) && !empty($_POST['to']) && 
-	$_POST['to'] > $_POST['from']
-)
+function query_table($table)
 {
-	$table = Input::exec_tr("SELECT №_накладной, дата, сумма, наименование_поставщика FROM приход WHERE дата BETWEEN '".$_POST['from']."' AND '".$_POST['to']."';");
-	if (count($table) < 1)
-	{
-		update_table(array( 'table' => $table_name,'notice' => "Внимание: нет совпадений по выбранному периоду."));
-		return;
-	}
 	$cols = array_keys($table[0]);
 
-	$cols_schema = '<div class=\"row\">';
+	$cols_schema = '<div class="row">';
 	foreach ($cols as $cell)
 	{
 		$cols_schema .= '<div class="cell ' . $cell . '">' . $cell . '</div>';
@@ -358,6 +349,10 @@ if (isset($_POST['ft_confirm_button']) &&
 		document.querySelector("#scroller").innerHTML = `'. $cols_schema .'`;
 		document.querySelector("#scroller").innerHTML += `'. $table_schema .'`;
     </script>';
+}
+
+function set_name($value)
+{
 	echo '<script>
 		document.querySelector(`#table_name`).innerHTML = `<option value="" name="first_element" id="first_element"></option>`;
 	</script>';
@@ -367,6 +362,60 @@ if (isset($_POST['ft_confirm_button']) &&
             document.querySelector(`#table_name`).innerHTML += `<option value="'. $name['TABLE_NAME'] .'">'. to_upper($name['TABLE_NAME']) .'</option>`;
         </script>';
     }
+	echo '<script>
+		document.querySelector(`#first_element`).innerHTML = `'.$value.'`;
+	</script>';
+}
+
+if (isset($_POST['ft_confirm_button']) && 
+	!empty($_POST['from']) && !empty($_POST['to']) && 
+	$_POST['to'] > $_POST['from']
+)
+{
+	$table = Input::exec_tr("SELECT №_накладной, дата, сумма, наименование_поставщика FROM приход WHERE дата BETWEEN '".$_POST['from']."' AND '".$_POST['to']."';");
+	if (count($table) < 1)
+	{
+		update_table(array( 'table' => $table_name,'notice' => "Внимание: нет совпадений по выбранному периоду."));
+		return;
+	}
+	query_table($table);
+	set_name($_POST['from'].'=>'.$_POST['to']);
+	return;
+}
+if (isset($_POST['fin_confirm_button']) && !empty($_POST['month']))
+{
+	$month = substr($_POST['month'], 0, 7);
+	$table = Input::exec_tr("SELECT п.сумма AS 'сумма прихода', р.сумма AS 'сумма расхода'
+		FROM (SELECT SUM(сумма) AS сумма FROM приход WHERE дата LIKE '".$month."%') AS п,
+			 (SELECT SUM(сумма) AS сумма FROM расход WHERE дата LIKE '".$month."%') AS р;
+	");
+	if (count($table) < 1)
+	{
+		update_table(array( 'table' => $table_name,'notice' => "Внимание: нет совпадений по выбранному периоду."));
+		return;
+	}
+	query_table($table);
+	set_name($month);
+	return;
+}
+if(isset($_POST['top10_button']))
+{
+	$table = Input::exec_tr("SELECT t.артикул, t.наименование,
+		SUM(d.количество) AS 'количество проданного',
+		SUM(d.стоимость) AS 'сумма проданного'
+		FROM Товары AS t
+		INNER JOIN Состав_расхода AS d ON t.артикул = d.артикул_товара
+		GROUP BY t.артикул, t.наименование
+		ORDER BY SUM(d.стоимость) DESC
+		LIMIT 10;
+	");
+	if (count($table) < 1)
+	{
+		update_table(array( 'table' => $table_name,'notice' => "Внимание: список продаж пуст."));
+		return;
+	}
+	query_table($table);
+	set_name("ТОП 10 ПРОДАЖ");
 	return;
 }
 update_table();

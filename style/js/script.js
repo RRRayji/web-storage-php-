@@ -27,6 +27,8 @@ var removeState = false;
 var remConfirm = document.querySelector("#rem_confirm");
 var sq = document.querySelector("#select_query");
 var ft = document.querySelector("#fromto_form");
+var fin = document.querySelector("#finance");
+var tt = document.querySelector("#top10_button");
 
 var searchErrorText = "Неопределённый критерий поиска. (введите 2+ символа)";
 
@@ -286,8 +288,15 @@ function display_rem_form()
 	}
 }
 
+function hidequeries()
+{
+	ft.style.display = `none`;
+	fin.style.display = `none`;
+}
+
 function display_fromto_form()
 {
+	hidequeries();
 	switch (sq.value)
 	{
 	case "dates":
@@ -295,8 +304,15 @@ function display_fromto_form()
 		anim_opacity(ft);
 		anim_move(ft);
 		break;
-	case "":
-		ft.style.display = `none`;
+	case "finance":
+		fin.style.display = `flex`;
+		anim_opacity(fin);
+		anim_move(fin);
+		break;
+	case "top10":
+		tt.value = 'select';
+		tt.click();
+		tt.value = null;
 	}
 }
 

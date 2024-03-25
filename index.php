@@ -4,7 +4,7 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Storage</title>
-	<link rel="stylesheet" type="text/css" href="/style/css/style.css?modified=33">
+	<link rel="stylesheet" type="text/css" href="/style/css/style.css?modified=35">
 </head>
 <body>
 	<header>
@@ -14,12 +14,19 @@
 			<select id="select_query" name="select_query" onchange="display_fromto_form()">
 				<option value="" selected>ЗАПРОСЫ</option>
 				<option value="dates">ПРИХОД С-ПО</option>
+				<option value="finance">ФИНАНСЫ (ЗА МЕСЯЦ)</option>
+				<option value="top10">ТОП 10 ПРОДАЖ</option>
 			</select>
 			<div id="fromto_form">
 				<input type="date" class="add_input" name="from">
 				<input type="date" class="add_input" name="to">
 				<input type="submit" class="add_input" name="ft_confirm_button" value="НАЙТИ">
 			</div>
+			<div id="finance">
+				<input type="date" class="add_input" name="month">
+				<input type="submit" class="add_input" name="fin_confirm_button" value="НАЙТИ">
+			</div>
+			<input type="submit" id="top10_button" name="top10_button" value="" onclick="this.form.submit()">
 		</form>
 		<form method="POST" action="" id="select_form">
 			<select name="table_name" id="table_name" onchange="this.form.submit()">
@@ -57,6 +64,6 @@
 
 	<?php	include_once  'source/init.php';
 			include_once  'source/load.php';	?>
-	<script src="style/js/script.js?modified=40"></script>
+	<script src="style/js/script.js?modified=41"></script>
 </body>
 </html>

@@ -88,7 +88,7 @@ header{
 }
 #select_form,#query_form{
 	width: 15%;
-	min-width: 120px;
+	min-width: max-content;
 	height: 100%;
 }
 #table_name,#select_query{
@@ -182,7 +182,7 @@ main{
 	justify-content: left;
 }
 /* 			ADD FORM		 */
-#add_form, #fromto_form{
+#add_form, #fromto_form, #finance{
 	display: none;
 	position: absolute;
 	left: 25.5svw;
@@ -284,13 +284,13 @@ main{
 	background-color: #38516d;
 	transform: translateY(-50%);
 }
-#fromto_form{
+#fromto_form, #finance{
 	display: none;
 	min-width: 70px;
 	min-height: 40px;
 	padding: 10px;
 }
-#fromto_form input{
+#fromto_form input, #finance input{
 	margin: 0;
 	margin-right: 10px;
 	min-width: 4svw;
@@ -303,6 +303,6 @@ main{
     color: #e0e1dd;
     background-color: #38516d;
 }
-#fromto_form input:last-child{
+#fromto_form input:last-child, #finance input:last-child{
 	margin-right: 0;
 }
