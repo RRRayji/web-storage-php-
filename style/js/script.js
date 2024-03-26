@@ -32,7 +32,7 @@ var fin = document.querySelector("#finance");
 var tt = document.querySelector("#top10_button");
 var cr = document.querySelector("#categ_rep_button");
 
-var searchErrorText = "Неопределённый критерий поиска. (введите 1+ символ)";
+var searchErrorText = "Неопределённый критерий поиска.";
 
 
 function unhideAll()
@@ -293,6 +293,7 @@ function display_rem_form()
 function hidequeries()
 {
 	ft.style.display = `none`;
+	rf.style.display = `none`;
 	fin.style.display = `none`;
 }
 

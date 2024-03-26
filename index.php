@@ -72,6 +72,6 @@
 
 	<?php	include_once  'source/init.php';
 			include_once  'source/load.php';	?>
-	<script src="style/js/script.js?modified=45"></script>
+	<script src="style/js/script.js?modified=47"></script>
 </body>
 </html>
