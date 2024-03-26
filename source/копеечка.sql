@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Хост: 127.0.0.1:3306
--- Время создания: Мар 25 2024 г., 03:07
+-- Время создания: Мар 26 2024 г., 15:13
 -- Версия сервера: 10.3.22-MariaDB
 -- Версия PHP: 7.1.33
 
@@ -599,7 +599,7 @@ ALTER TABLE `склады`
 -- AUTO_INCREMENT для таблицы `товары`
 --
 ALTER TABLE `товары`
-  MODIFY `артикул` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=92;
+  MODIFY `артикул` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=94;
 
 --
 -- Ограничения внешнего ключа сохраненных таблиц
